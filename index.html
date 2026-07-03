@@ -3,359 +3,273 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teach or Not 職涯財富精算系統</title>
+<title>全新公教理財平台籌備中 - Teach or Not</title>
 <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='url(%23bg)' stroke='rgba(255,255,255,0.6)' stroke-width='1.5'/><g opacity='0.9'><rect x='20' y='55' width='10' height='20' rx='3' fill='url(%23p1)'/><rect x='34' y='35' width='10' height='40' rx='3' fill='url(%23p2)'/><rect x='48' y='45' width='10' height='30' rx='3' fill='url(%23p3)'/><rect x='62' y='25' width='10' height='50' rx='3' fill='url(%23p4)'/><rect x='76' y='15' width='10' height='60' rx='3' fill='url(%23p5)'/></g><ellipse cx='50' cy='25' rx='30' ry='12' fill='url(%23glow)'/><defs><radialGradient id='bg' cx='30%' cy='30%' r='70%'><stop offset='0%' stop-color='rgba(255,255,255,0.6)'/><stop offset='60%' stop-color='rgba(255,255,255,0.1)'/><stop offset='100%' stop-color='rgba(0,0,0,0.05)'/></radialGradient><linearGradient id='glow' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='rgba(255,255,255,0.5)'/><stop offset='100%' stop-color='rgba(255,255,255,0)'/></linearGradient><linearGradient id='p1' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%235AC8FA'/><stop offset='100%' stop-color='%23007AFF'/></linearGradient><linearGradient id='p2' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%234CD964'/><stop offset='100%' stop-color='%2328a745'/></linearGradient><linearGradient id='p3' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23FF9500'/><stop offset='100%' stop-color='%23E07B00'/></linearGradient><linearGradient id='p4' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23FF3B30'/><stop offset='100%' stop-color='%23C61A09'/></linearGradient><linearGradient id='p5' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23AF52DE'/><stop offset='100%' stop-color='%237A289E'/></linearGradient></defs></svg>" type="image/svg+xml">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="style.css?v=2">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #0f172a;
+    }
+    
+    .coming-soon-container {
+        max-width: 650px;
+        width: 100%;
+        text-align: center;
+        padding: 50px 40px;
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.05);
+        animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(30px);
+        box-sizing: border-box;
+    }
+
+    @keyframes fadeUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-container {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 25px;
+    }
+
+    .logo-container .glow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(0,122,255,0.15) 0%, transparent 70%);
+        filter: blur(10px);
+        animation: pulse 3s infinite alternate;
+    }
+
+    @keyframes pulse {
+        from { transform: scale(1); opacity: 0.8; }
+        to { transform: scale(1.2); opacity: 1; }
+    }
+
+    .logo-container .logo-body {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+    }
+
+    .title {
+        font-size: 2.1rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        color: #0f172a;
+        line-height: 1.3;
+        letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+        font-size: 1.15rem;
+        color: #475569;
+        margin-bottom: 35px;
+        line-height: 1.6;
+        font-weight: 500;
+    }
+
+    .cta-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: #007AFF;
+        color: white;
+        padding: 18px 36px;
+        border-radius: 14px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 10px 25px rgba(0, 122, 255, 0.3);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        margin-bottom: 45px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .cta-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(0, 122, 255, 0.4);
+        background: #0066d6;
+    }
+
+    .email-capture {
+        background: #f8fafc;
+        padding: 30px;
+        border-radius: 18px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 30px;
+    }
+
+    .email-capture p {
+        margin: 0 0 15px 0;
+        font-size: 1rem;
+        color: #334155;
+        font-weight: 600;
+    }
+
+    .input-group-flex {
+        display: flex;
+        gap: 10px;
+    }
+
+    .input-group-flex input {
+        flex: 1;
+        padding: 14px 18px;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 1.05rem;
+        outline: none;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .input-group-flex input:focus {
+        border-color: #007AFF;
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+    }
+
+    .input-group-flex button {
+        padding: 14px 28px;
+        border-radius: 10px;
+        border: none;
+        background: #1e293b;
+        color: white;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .input-group-flex button:hover {
+        background: #0f172a;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin-top: 20px;
+    }
+
+    .social-links a {
+        color: #64748b;
+        text-decoration: none;
+        transition: color 0.3s ease, transform 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #f1f5f9;
+    }
+
+    .social-links a:hover {
+        color: #007AFF;
+        background: #e0f2fe;
+        transform: translateY(-2px);
+    }
+
+    .social-icon {
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+    }
+
+    @media (max-width: 600px) {
+        .input-group-flex {
+            flex-direction: column;
+        }
+        .cta-btn {
+            font-size: 1.1rem;
+            padding: 16px 20px;
+        }
+        .title {
+            font-size: 1.8rem;
+        }
+    }
+</style>
 </head>
 <body>
 
-<!-- Hidden container for A4 Export -->
-<div id="export-report-container" style="display:none; position:absolute; top:-9999px; left:-9999px; width:210mm; min-height:297mm; background:white; color:black; padding:20mm; box-sizing:border-box;"></div>
-
-<header class="glass-card header" id="main-header" style="transition: all 0.3s ease; position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; gap: 15px;">
-    <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
-        <div class="header-title-container" style="transition: all 0.3s ease; text-align: center; width: 100%;">
-            <h1 id="header-h1" style="display: flex; align-items: center; justify-content: center; gap: 16px; margin: 0; transition: all 0.3s ease;">
-                <div id="header-logo" style="position: relative; width: 50px; height: 50px; display: inline-block; vertical-align: middle; transition: all 0.3s ease;">
-                    <div style="position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(90,200,250,0.6) 0%, rgba(175,82,222,0.6) 50%, transparent 100%); filter: blur(8px); opacity: 0.8; pointer-events: none;"></div>
-                    <div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 60%, rgba(0,0,0,0.05) 100%); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.6); box-shadow: inset -3px -3px 10px rgba(0,0,0,0.05), inset 3px 3px 10px rgba(255,255,255,0.8), 0 8px 20px rgba(0,0,0,0.05); overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                        <svg viewBox="0 0 100 100" style="width: 65%; height: 65%; opacity: 0.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));">
-                            <rect x="15" y="55" width="10" height="20" rx="4" fill="url(#p1)" />
-                            <rect x="31" y="35" width="10" height="40" rx="4" fill="url(#p2)" />
-                            <rect x="47" y="45" width="10" height="30" rx="4" fill="url(#p3)" />
-                            <rect x="63" y="25" width="10" height="50" rx="4" fill="url(#p4)" />
-                            <rect x="79" y="15" width="10" height="60" rx="4" fill="url(#p5)" />
-                            <defs>
-                                <linearGradient id="p1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5AC8FA"/><stop offset="100%" stop-color="#007AFF"/></linearGradient>
-                                <linearGradient id="p2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4CD964"/><stop offset="100%" stop-color="#28a745"/></linearGradient>
-                                <linearGradient id="p3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF9500"/><stop offset="100%" stop-color="#E07B00"/></linearGradient>
-                                <linearGradient id="p4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF3B30"/><stop offset="100%" stop-color="#C61A09"/></linearGradient>
-                                <linearGradient id="p5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#AF52DE"/><stop offset="100%" stop-color="#7A289E"/></linearGradient>
-                            </defs>
-                        </svg>
-                        <div style="position: absolute; top: 2px; left: 15%; width: 70%; height: 35%; background: linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%); border-radius: 50% / 40%;"></div>
-                    </div>
-                </div>
-                <span>Teach or Not</span>
-            </h1>
-            <p id="header-desc" style="margin: 8px 0 0 0; font-size: 16px; font-weight: 500; color: var(--text-secondary); transition: all 0.3s ease;">從理性分析職涯道路，精算不同職業在退休時所累積的財富。</p>
-        </div>
-    </div>
-    <div class="top-nav" id="main-nav" style="display: flex; gap: 10px; width: 100%; transition: all 0.3s ease;">
-        <a href="#kpi-section" class="nav-link nav-blue" style="flex: 1; text-align: center;">終極身價</a>
-        <a href="#chart-cumulative" class="nav-link nav-purple" style="flex: 1; text-align: center;">生命週期曲線</a>
-        <a href="#chart-annual" class="nav-link nav-orange" style="flex: 1; text-align: center;">年度收支</a>
-        <a href="#chart-monthly" class="nav-link nav-red" style="flex: 1; text-align: center;">每月結構</a>
-        <a href="#reference-data" class="nav-link nav-green" style="flex: 1; text-align: center;">參考資料</a>
-    </div>
-</header>
-
-<div class="dashboard-layout">
-    <div class="sidebar glass-card">
-        <div class="segmented-control">
-            <button class="nav-tab active" onclick="switchMainTab(0)">環境與分配</button>
-            <button class="nav-tab" onclick="switchMainTab(1)">公教</button>
-            <button class="nav-tab" onclick="switchMainTab(2)">對比職業</button>
-        </div>
-
-        <div class="tab-content active" id="tab-0">
-            <div class="section-title">基礎與投資設定</div>
-            <div class="grid-2-col">
-                <div class="input-group inline"><label>目前年齡</label><input type="number" id="currentAge" value="26"></div>
-                <div class="input-group inline"><label>預計退休年齡</label><input type="number" id="retireAge" value="65"></div>
-                <div class="input-group inline"><label>已有投資 (元)</label><input type="number" id="initInvest" value="0"></div>
-                <div class="input-group inline"><label>已有存款 (元)</label><input type="number" id="initCash" value="0"></div>
-            </div>
-            <div class="grid-2-col">
-                <div class="input-group inline">
-                    <label style="color:var(--sys-blue);" class="tooltip-trigger">年化報酬 (%)
-                        <div class="tooltip">平均年化報酬率以大盤的期望值做設定，可按照個人情形修改。</div>
-                    </label>
-                    <input type="number" id="roi" value="7.0" step="0.1">
-                </div>
-                <div class="input-group inline">
-                    <label style="color:var(--sys-green);" class="tooltip-trigger">退休投報 (%)
-                        <div class="tooltip">此金額從政府資料中取得，採取保守的估計方式。<br><br><a href="https://www.pension.org.tw/index.php/pensinkb/data?id=310" target="_blank">查看政府資料來源 ↗</a></div>
-                    </label>
-                    <input type="number" id="pensionRoi" value="4.5" step="0.1">
-                </div>
-                <div class="input-group inline"><label>活存利率 (%)</label><input type="number" id="savingRate" value="1.0" step="0.1"></div>
-            </div>
-            
-            <div class="input-group inline">
-                <label style="color:var(--sys-orange); font-weight:600;">退休給付主策略</label>
-                <select id="pensionClaimMode" onchange="togglePensionClaimUI(); runSimulation();" style="border: 1px solid var(--sys-orange);">
-                    <option value="annuity" selected>月領 / 分批攤提</option>
-                    <option value="lumpSum">一次全額請領</option>
-                </select>
-            </div>
-
-            <div class="section-title">財務分配邏輯</div>
-            <div class="input-group">
-                <select id="allocMode" onchange="toggleAllocMode()">
-                    <option value="percent" selected>按實領月薪比例分配</option>
-                    <option value="fixed">每月固定金額分配</option>
-                </select>
-            </div>
-            <div id="percentPanel">
-                <div class="grid-2-col">
-                    <div class="input-group inline"><label>生活費 (%)</label><input type="number" id="pctExp" value="40"></div>
-                    <div class="input-group inline"><label>投資 (%)</label><input type="number" id="pctInv" value="55"></div>
-                    <div class="input-group inline"><label>儲蓄 (%)</label><input type="number" id="pctSav" value="5"></div>
-                    <div class="input-group inline"><label>生活費上限 (元)</label><input type="number" id="expCap" value="50000"></div>
-                </div>
-            </div>
-            <div id="fixedPanel" style="display:none;">
-                <div class="grid-2-col">
-                    <div class="input-group inline"><label>生活費 (元)</label><input type="number" id="fixExp" value="20000"></div>
-                    <div class="input-group inline"><label>投資 (元)</label><input type="number" id="fixInv" value="30000"></div>
-                    <div class="input-group inline"><label>儲蓄 (元)</label><input type="number" id="fixSav" value="0"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-content" id="tab-1">
-            <div class="section-title">公教體系參數</div>
-            <div class="input-group inline" style="margin-bottom: 8px;">
-                <label>最高學歷</label>
-                <select id="teacherDegree" onchange="updateStartPoint()" style="text-align: right;">
-                    <option value="bachelor">大學</option>
-                    <option value="master" selected>碩士</option>
-                    <option value="phd">博士</option>
-                </select>
-            </div>
-            <div class="input-group inline">
-                <label>自訂起敘薪點</label>
-                <input type="number" id="startPoint" value="245" onchange="runSimulation()">
-            </div>
-            <div class="input-group">
-                <label>教師身份別</label>
-                <select id="teacherType" onchange="toggleTeacherOptions()" style="margin-top: 6px; text-align: left;">
-                    <option value="official_new" selected>公立正式教師 (112新制-個人專戶)</option>
-                    <option value="official_old">公立正式教師 (舊制-確定給付)</option>
-                    <option value="substitute">代理教師 (勞保/勞退)</option>
-                </select>
-            </div>
-            <div class="input-group inline" id="laborPensionGroup" style="display:none; margin-top: 10px;">
-                <label>勞退自提 6%</label>
-                <input type="checkbox" id="optInPension" style="width:20px;height:20px;accent-color:var(--sys-blue);" onchange="runSimulation()">
-            </div>
-            <div id="newSysWithdrawalGroup" style="display:flex; flex-direction:column; gap:12px; margin-top:15px; padding:16px; background:rgba(0,122,255,0.06); border-radius:12px; border:1px dashed rgba(0,122,255,0.3);">
-                <div style="font-weight:600; font-size:14px; color:var(--sys-blue);">新制退撫專戶 提領策略</div>
-                <select id="pensionWithdrawalMode" onchange="toggleWithdrawalMode(); runSimulation();" style="width: 100%; text-align:left; background:#FFF;">
-                    <option value="A" selected>模式 A：固定比例提領 (財富永動機)</option>
-                    <option value="B">模式 B：平均餘命攤提 (領至歸零)</option>
-                </select>
-                <div id="modeA_panel" class="input-group inline" style="margin-bottom:0;">
-                    <label>自訂提領率 (%)</label>
-                    <input type="number" id="modeA_rate" value="4.0" step="0.1" onchange="runSimulation()" style="width:70px; padding:6px 10px; background:#FFF;">
-                </div>
-                <div id="modeB_panel" class="input-group inline" style="display:none; margin-bottom:0;">
-                    <label>攤提年限 (年)</label>
-                    <input type="number" id="modeB_years" value="20" onchange="runSimulation()" style="width:70px; padding:6px 10px; background:#FFF;">
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-content" id="tab-2">
-            <div class="section-title">職涯與登出設定</div>
-            <div class="input-group"><label>對比職業壽命: <span id="val-life">15</span> 年</label><input type="range" id="engLifespan" min="5" max="35" value="15" oninput="document.getElementById('val-life').innerText=this.value"></div>
-            <div class="input-group"><label>登出後第二月薪: $<span id="val-sec">40,000</span></label><input type="range" id="secondSalary" min="25000" max="100000" step="5000" value="40000" oninput="document.getElementById('val-sec').innerText=this.value.toLocaleString()"></div>
-
-            <div class="section-title">
-                <input type="text" id="title-sys" class="editable-title" value="系統廠" onchange="updateDynamicTitles(); runSimulation();" title="點擊即可修改職業名稱">
-            </div>
-            <div class="grid-2-col">
-                <div class="input-group inline"><label>起始月薪</label><input type="number" id="sysBase" value="60000"></div>
-                <div class="input-group inline"><label>保底年終(月)</label><input type="number" id="sysBonus" value="2"></div>
-                <div class="input-group inline"><label>預估分紅(月)</label><input type="number" id="sysProfit" value="2"></div>
-                <div class="input-group inline"><label>調薪率(%)</label><input type="number" id="sysGrowth" value="3.0" step="0.5"></div>
-            </div>
-            <div class="input-group inline"><label>年薪天花板</label><input type="number" id="sysCap" value="1800000" style="width: 100%; box-sizing: border-box;"></div>
-
-            <div class="section-title" style="padding: 2px 6px;">半導體大廠</div>
-            <div class="grid-2-col">
-                <div class="input-group inline"><label>起始月薪</label><input type="number" id="semiBase" value="80000"></div>
-                <div class="input-group inline"><label>保底年終(月)</label><input type="number" id="semiBonus" value="2"></div>
-                <div class="input-group inline"><label>預估分紅(月)</label><input type="number" id="semiProfit" value="16"></div>
-                <div class="input-group inline"><label>調薪率(%)</label><input type="number" id="semiGrowth" value="5.0" step="0.5"></div>
-            </div>
-            <div class="input-group inline"><label>年薪天花板</label><input type="number" id="semiCap" value="3500000" style="width: 100%; box-sizing: border-box;"></div>
-
-            <div class="section-title">
-                <input type="text" id="title-start" class="editable-title" value="外商 / 新創" onchange="updateDynamicTitles(); runSimulation();" title="點擊即可修改職業名稱">
-            </div>
-            <div class="grid-2-col">
-                <div class="input-group inline"><label>起始月薪</label><input type="number" id="asmlBase" value="80000"></div>
-                <div class="input-group inline"><label>保底年終(月)</label><input type="number" id="asmlBonus" value="2"></div>
-                <div class="input-group inline"><label>保障分紅(月)</label><input type="number" id="asmlProfit" value="5"></div>
-                <div class="input-group inline"><label>常態調薪(%)</label><input type="number" id="asmlGrowth" value="3.0" step="0.5"></div>
-                <div class="input-group inline"><label style="color:var(--sys-orange)">跳槽頻率(年)</label><input type="number" id="hopYears" value="3"></div>
-                <div class="input-group inline"><label style="color:var(--sys-orange)">跳槽加薪(%)</label><input type="number" id="hopBump" value="10.0" step="1"></div>
-            </div>
-            <div class="input-group inline"><label>年薪天花板</label><input type="number" id="asmlCap" value="3000000" style="width: 100%; box-sizing: border-box;"></div>
-        </div>
-
-        <button class="btn-primary" onclick="runSimulation()">執行精算更新</button>
-        <div id="export-actions" style="display: flex; gap: 10px; margin-top: 15px;">
-            <button id="btn-export-png" disabled class="btn-outline" onclick="exportReportSafe('png')" style="flex:1; border: none; background: #e0e0e0; color: #888; font-weight: 600; border-radius: 8px; cursor: not-allowed; transition: 0.2s; padding: 10px;">匯出圖片</button>
-            <button id="btn-export-pdf" disabled class="btn-outline" onclick="exportReportSafe('pdf')" style="flex:1; border: none; background: #e0e0e0; color: #888; font-weight: 600; border-radius: 8px; cursor: not-allowed; transition: 0.2s; padding: 10px;">匯出 PDF</button>
+<div class="coming-soon-container">
+    <div class="logo-container">
+        <div class="glow"></div>
+        <div class="logo-body">
+            <svg viewBox="0 0 100 100" style="width: 55%; height: 55%;">
+                <rect x="15" y="55" width="10" height="20" rx="4" fill="url(#p1)" />
+                <rect x="31" y="35" width="10" height="40" rx="4" fill="url(#p2)" />
+                <rect x="47" y="45" width="10" height="30" rx="4" fill="url(#p3)" />
+                <rect x="63" y="25" width="10" height="50" rx="4" fill="url(#p4)" />
+                <rect x="79" y="15" width="10" height="60" rx="4" fill="url(#p5)" />
+                <defs>
+                    <linearGradient id="p1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5AC8FA"/><stop offset="100%" stop-color="#007AFF"/></linearGradient>
+                    <linearGradient id="p2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4CD964"/><stop offset="100%" stop-color="#28a745"/></linearGradient>
+                    <linearGradient id="p3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF9500"/><stop offset="100%" stop-color="#E07B00"/></linearGradient>
+                    <linearGradient id="p4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF3B30"/><stop offset="100%" stop-color="#C61A09"/></linearGradient>
+                    <linearGradient id="p5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#AF52DE"/><stop offset="100%" stop-color="#7A289E"/></linearGradient>
+                </defs>
+            </svg>
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="glass-card top-controls">
-            <div class="career-selector">
-                <span style="font-weight:700; margin-right:10px;">欲對比之職業：</span>
-                <label class="career-cb"><input type="checkbox" id="showSys" onchange="runSimulation()"> <span class="dyn-sys">系統廠</span></label>
-                <label class="career-cb"><input type="checkbox" id="showSemi" checked onchange="runSimulation()"> 半導體大廠</label>
-                <label class="career-cb"><input type="checkbox" id="showStart" onchange="runSimulation()"> <span class="dyn-start">外商 / 新創</span></label>
-            </div>
-            <div class="segmented-control" style="margin:0; width: 240px;">
-                <button id="btn-mode-invest" class="active" onclick="setChartMode('invest')">含投資複利</button>
-                <button id="btn-mode-pure" onclick="setChartMode('pure')">純收入</button>
-            </div>
+    <h1 class="title">全新公教理財平台籌備中，先來算算調薪吧！</h1>
+    <p class="subtitle">我們正在打造更豐富的職涯財富精算系統。<br>在主站正式上線前，趕快來試算最新公布的調薪方案！</p>
+
+    <a href="raise_calculator.html" class="cta-btn">
+        <span>👉 前往 115年軍公教調薪試算工具</span>
+    </a>
+
+    <div class="email-capture">
+        <p>留下信箱，第一時間取得平台上線與最新工具通知</p>
+        <div class="input-group-flex">
+            <input type="email" placeholder="您的 Email 地址" id="email-input">
+            <button onclick="alert('感謝您的支持！這只是一個展示版面，未來您可以串接真實的發信系統。')">通知我</button>
         </div>
+    </div>
 
-        <div class="kpi-grid" id="kpi-section">
-            <div class="kpi-card glass-card">
-                <div class="kpi-title" id="kpi-teacher-label">教師 90歲終極身價</div>
-                <div class="kpi-value-inv" id="kpi-teacher-inv">$0</div>
-                <div class="kpi-value-pure" id="kpi-teacher-pure">純收入: $0</div>
-                <div class="kpi-value-ret" id="kpi-teacher-ret">退休時總資產池: $0</div>
-            </div>
-            <div class="kpi-card glass-card" id="card-sys" style="display:none;">
-                <div class="kpi-title"><span class="dyn-sys">系統廠</span> 90歲終極身價</div>
-                <div class="kpi-value-inv" id="kpi-sys-inv" style="color:var(--sys-blue)">$0</div>
-                <div class="kpi-value-pure" id="kpi-sys-pure">純收入: $0</div>
-                <div class="kpi-value-ret" id="kpi-sys-ret">退休時總資產池: $0</div>
-            </div>
-            <div class="kpi-card glass-card" id="card-semi">
-                <div class="kpi-title">半導體 90歲終極身價</div>
-                <div class="kpi-value-inv" id="kpi-semi-inv" style="color:var(--text-primary)">$0</div>
-                <div class="kpi-value-pure" id="kpi-semi-pure">純收入: $0</div>
-                <div class="kpi-value-ret" id="kpi-semi-ret">退休時總資產池: $0</div>
-            </div>
-            <div class="kpi-card glass-card" id="card-start" style="display:none;">
-                <div class="kpi-title"><span class="dyn-start">外商 / 新創</span> 90歲終極身價</div>
-                <div class="kpi-value-inv" id="kpi-start-inv" style="color:var(--sys-orange)">$0</div>
-                <div class="kpi-value-pure" id="kpi-start-pure">純收入: $0</div>
-                <div class="kpi-value-ret" id="kpi-start-ret">退休時總資產池: $0</div>
-            </div>
-        </div>
-
-        <div class="chart-block" id="chart-cumulative">
-            <div class="chart-header"><h3>財富雙軌生命週期曲線 (至90歲)</h3></div>
-            <div class="chart-panel-wrapper">
-                <div class="chart-container"><canvas id="cumulativeChart"></canvas></div>
-                <div class="hover-panel" id="wealth-panel">
-                    <div class="hover-placeholder">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 12 12 12 8"></polyline></svg><br>
-                        請將滑鼠移至左側曲線上<br>檢視各職業的可動用資產與退休資金池
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="chart-block" id="chart-annual">
-            <div class="chart-header">
-                <h3 id="annual-chart-title">年度收入與財務結構 (至90歲)</h3>
-                <div class="role-tabs" id="annual-role-tabs">
-                    <button class="role-btn active" onclick="switchRoleTab(0, 'annual')">教師</button>
-                    <button class="role-btn" id="btn-annual-sys" onclick="switchRoleTab(1, 'annual')" style="display:none;"><span class="dyn-sys">系統廠</span></button>
-                    <button class="role-btn" id="btn-annual-semi" onclick="switchRoleTab(2, 'annual')">半導體</button>
-                    <button class="role-btn" id="btn-annual-start" onclick="switchRoleTab(3, 'annual')" style="display:none;"><span class="dyn-start">外商/新創</span></button>
-                </div>
-            </div>
-            <div class="chart-panel-wrapper">
-                <div class="chart-container"><canvas id="annualChart"></canvas></div>
-                <div class="hover-panel" id="annual-panel">
-                    <div class="hover-placeholder">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg><br>
-                        請將滑鼠移至左側長條圖<br>檢視該年度的稅金與收支明細
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="chart-block" id="chart-monthly">
-            <div class="chart-header">
-                <h3 id="monthly-chart-title">每月常態收支結構 (至90歲)</h3>
-                <div class="role-tabs" id="monthly-role-tabs">
-                    <button class="role-btn active" onclick="switchRoleTab(0, 'monthly')">教師</button>
-                    <button class="role-btn" id="btn-monthly-sys" onclick="switchRoleTab(1, 'monthly')" style="display:none;"><span class="dyn-sys">系統廠</span></button>
-                    <button class="role-btn" id="btn-monthly-semi" onclick="switchRoleTab(2, 'monthly')">半導體</button>
-                    <button class="role-btn" id="btn-monthly-start" onclick="switchRoleTab(3, 'monthly')" style="display:none;"><span class="dyn-start">外商/新創</span></button>
-                </div>
-            </div>
-            <div class="chart-panel-wrapper">
-                <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
-                <div class="hover-panel" id="monthly-panel">
-                    <div class="hover-placeholder">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><br>
-                        請將滑鼠移至左側長條圖<br>檢視該月份各項保險與分配明細
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card" id="reference-data">
-            <h3 style="margin-top:0;">參考資料區</h3>
-            
-            <details open>
-                <summary>在職期間保險與稅務公式 (含資金池追蹤)</summary>
-                <div style="padding: 10px 0; font-size: 14px; color:var(--text-secondary);">
-                    <ul style="padding-left: 20px; line-height: 1.8;">
-                        <li><strong>純收入模式：</strong> 關閉所有投資與儲蓄利息，亦不扣除生活費支出。將工作期間實際獲得的稅後淨收入，與退休後領取的保本年金/一次金總額進行絕對值累加。</li>
-                        <li><strong>年度生活費估算：</strong> 每月生活費 × 12.5 (包含年節額外支出估算)</li>
-                        <li><strong>公保費 (入資金池)：</strong> 本俸 × 8.28% × 35% (自付) / 65% (政府補助)</li>
-                        <li><strong>退撫新制 (入資金池)：</strong> 本俸 × 2 × 15% × 35% (自付) / 65% (政府補助)</li>
-                        <li><strong>健保費 (純支出不回收)：</strong> 投保薪資 × 5.17% × 30%</li>
-                        <li><strong>勞保費 (入資金池)：</strong> 依法定投保級距 (上限 45,800 元) 計算，費率 12.5%。負擔比例為：自付 20% / 雇主 70% / 政府 10%。</li>
-                        <li><strong>勞退新制 6% (入資金池)：</strong> 適用勞基法者（如代理教師、科技業），雇主依法必須「額外」為您提撥最少 6% 的薪資到個人勞退專戶。此為雇主的法定成本，非從您的薪水扣除。<br><span style="color:var(--sys-cyan);">* 本系統之「雇主負擔」資金池，即為合併顯示【勞保(雇主+政府負擔) + 勞退(雇主強制提撥6%)】，真實反映資方為您付出的隱形薪酬。</span></li>
-                        <li><strong>所得稅：</strong> 年度收入扣除免稅額與各項扣除額(約44.6萬)後，以淨額對應累進級距，並扣除累進差額。</li>
-                    </ul>
-                </div>
-            </details>
-
-            <details>
-                <summary>教師薪資級距與對應總表 (大學/碩士/博士)</summary>
-                <div style="margin-bottom: 10px; font-size: 13px; color: var(--text-secondary);">
-                    依據法定限頂：大學起敘 190 (頂 450) / 碩士起敘 245 (頂 650) / 博士起敘 330 (頂 680)
-                </div>
-                <div style="overflow-x: auto;">
-                    <table class="ios-table" id="referenceTable">
-                        <thead><tr><th>薪點</th><th>本俸</th><th>學術加給</th><th>應發月薪</th><th>健保</th><th>正式實領(扣公保退撫)</th><th>代理實領(扣勞保)</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </details>
-
-            <details>
-                <summary>退休金給付與提領邏輯</summary>
-                <div style="padding: 10px 0; font-size: 14px; color:var(--text-secondary);">
-                    <ul style="padding-left: 20px; line-height: 1.8;">
-                        <li><strong>領取資格與 15 年門檻限制：</strong> 
-                            <br> - <strong>公保 / 退撫 / 勞保年金：</strong> 年資需滿 15 年方可選擇「按月領取」常態年金；若未滿 15 年（如科技業提早登出），僅能結清換取「一次金」併入現金水庫。
-                            <br> - <strong>勞退新制 (個人專戶)：</strong> 只要有提繳紀錄，於「年滿 60 歲」時即可請領。提繳年資滿 15 年者可選擇「月領」或「一次領」；未滿 15 年者僅能「一次領」。
-                        </li>
-                        <li><strong>【策略：月領/分批】舊制退撫：</strong> 採退撫月退俸 + 公保一次請領（實務最常見組合）。</li>
-                        <li><strong>【策略：月領/分批】112新制：</strong> 採公保年金月領 + 退撫專戶留存並透過設定策略（4%或餘命）於獨立資金池內滾存並分批提領。</li>
-                        <li><strong>【策略：月領/分批】勞保/科技業：</strong> 採勞保老年年金月領 + 勞退新制個人專戶一次請領/分批提領。</li>
-                        <li><strong>【策略：一次全額請領】：</strong> 退休當年度將所有保險年金與職業退休金全額折算為一次性給付，結清資金池並整筆灌入個人可動用資庫。</li>
-                    </ul>
-                </div>
-            </details>
-        </div>
-
+    <div class="social-links">
+        <a href="#" aria-label="Facebook" title="Facebook">
+            <svg class="social-icon" viewBox="0 0 24 24">
+                <path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/>
+            </svg>
+        </a>
+        <a href="#" aria-label="LINE" title="LINE">
+            <svg class="social-icon" viewBox="0 0 24 24">
+                <path d="M22 10.45c0-4.36-4.4-7.9-9.8-7.9S2.4 6.09 2.4 10.45c0 3.93 3.47 7.27 8.23 7.82.32.07.75.21.85.5.1.26.06.66.03.9l-.16.96c-.05.28-.23 1.13 1 .6 1.22-.51 6.59-3.87 8.35-6.03C21.6 13.1 22 11.83 22 10.45zm-12.8 2.03H7.07V8.12c0-.25.21-.46.46-.46s.46.21.46.46v3.45h1.21c.25 0 .46.21.46.46s-.21.45-.46.45zm2.84 0h-.92c-.25 0-.46-.21-.46-.46V8.12c0-.25.21-.46.46-.46s.46.21.46.46v4.36c0 .25-.21.46-.46.46zm3.93 0h-1.2l-1.85-2.61v2.61c0 .25-.21.46-.46.46s-.46-.21-.46-.46V8.12c0-.25.21-.46.46-.46s.46.21.46.46l1.85 2.61V8.12c0-.25.21-.46.46-.46s.46.21.46.46v4.36c0 .25-.21.46-.46.46z"/>
+            </svg>
+        </a>
     </div>
 </div>
 
-<script src="data.js?v=3"></script>
-<script src="engine.js?v=3"></script>
-<script src="export.js?v=3"></script>
 </body>
 </html>

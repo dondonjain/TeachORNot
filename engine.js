@@ -39,6 +39,8 @@ function togglePensionClaimUI() {
     let claimMode = document.getElementById('pensionClaimMode').value;
     
     document.getElementById('laborPensionGroup').style.display = (val === 'substitute') ? 'flex' : 'none';
+    let volGroup = document.getElementById('voluntaryPensionGroup');
+    if (volGroup) volGroup.style.display = (val === 'official_new') ? 'flex' : 'none';
     
     if (claimMode === 'lumpSum') {
         document.getElementById('newSysWithdrawalGroup').style.display = 'none';
@@ -96,8 +98,8 @@ Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "SF Pro Text", 
 function formatMoney(num) { return Math.round(num).toLocaleString('en-US'); }
 function getHealthIns(gross) { let bracket = healthBrackets.find(b => b >= gross) || gross; return Math.round(bracket * 0.0517 * 0.3); }
 
-function getTaxData(grossAnnual) {
-    let totalDeduction = 446000;
+function getTaxData(grossAnnual, extraDeduction = 0) {
+    let totalDeduction = 446000 + extraDeduction;
     let taxable = Math.max(0, grossAnnual - totalDeduction);
     let tax = 0, rate = '0%', formula = '';
 
@@ -327,10 +329,21 @@ function simulateEngine(isPure) {
             let b = basePayMap[currentPt]; let a = (currentPt >= 475) ? 35780 : ((currentPt >= 350) ? 30140 : ((currentPt >= 245) ? 26560 : 23160));
             let gM = b + a; let mH = getHealthIns(gM); let mL=0, mPub=0, mPen=0;
 
-            let mPubSelf = (isOldSys || isNewSys) ? b * 0.0828 * 0.35 : 0;
-            let mPubGov  = (isOldSys || isNewSys) ? b * 0.0828 * 0.65 : 0;
-            let mPenSelf = (isOldSys || isNewSys) ? b * 2 * 0.15 * 0.35 : (optInPension ? Math.min(gM, 150000)*0.06 : 0);
-            let mPenGov  = (isOldSys || isNewSys) ? b * 2 * 0.15 * 0.65 : Math.min(gM, 150000)*0.06;
+            let mPubSelf = 0, mPubGov = 0;
+            if (isOldSys) {
+                mPubSelf = Math.round(b * 0.0783 * 0.35);
+                mPubGov  = Math.round(b * 0.0783 * 0.65);
+            } else if (isNewSys) {
+                mPubSelf = Math.round(b * 0.1633 * 0.35);
+                mPubGov  = Math.round(b * 0.1633 * 0.65);
+            }
+            
+            let volPenElement = document.getElementById('voluntaryPensionRate');
+            let volPenRate = (isNewSys && volPenElement) ? parseFloat(volPenElement.value) / 100 : 0;
+            let mVolPen = (isOldSys || isNewSys) ? Math.round(b * 2 * volPenRate) : 0;
+
+            let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : (optInPension ? Math.round(Math.min(gM, 150000)*0.06) : 0);
+            let mPenGov  = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.65) : Math.round(Math.min(gM, 150000)*0.06);
             let mLaborSelf = (isOldSys || isNewSys) ? 0 : 1145;
             let mLaborGov  = (isOldSys || isNewSys) ? 0 : 4580;
 
@@ -349,7 +362,7 @@ function simulateEngine(isPure) {
             let netM = gM - mH - mL - mPub - mPen; p[0].yrs++;
             let alloc = allocateFunds(netM, mode, pctE, pctI, pctS, expCap, fixE, fixI, fixS);
             let gA = gM * 13.5; 
-            let taxObj = getTaxData(gA); let bNet = (gM * 1.5) - taxObj.tax; 
+            let taxObj = getTaxData(gA, (mPubSelf + mPenSelf) * 12); let bNet = (gM * 1.5) - taxObj.tax;
             let totP = pctI + pctS;
             
             let aIAdd = 0, aSAdd = bNet;
@@ -392,15 +405,15 @@ function simulateEngine(isPure) {
                 } else { tgM = secSal; tgA = secSal * 12; bTot = 0; }
 
                 let tmH = getHealthIns(tgM); let tmL = 1145; 
-                let tmPenSelf = optInPension ? Math.min(tgM, 150000)*0.06 : 0;
-                let tmPenGov = Math.min(tgM, 150000)*0.06;
+                let tmPenSelf = optInPension ? Math.round(Math.min(tgM, 150000)*0.06) : 0;
+                let tmPenGov = Math.round(Math.min(tgM, 150000)*0.06);
                 let tTotalSelfM = tmL + tmPenSelf; let tTotalGovM = 4580 + tmPenGov;
                 
                 let tnetM = tgM - tmH - tmL - tmPenSelf;
                 p[i].pFund = p[i].pFund*(1+pRate) + (tmPenSelf*12) + (tmPenGov*12); p[i].yrs++;
 
                 let talloc = allocateFunds(tnetM, mode, pctE, pctI, pctS, expCap, fixE, fixI, fixS);
-                let ttaxObj = getTaxData(tgA); let tbNet = bTot - ttaxObj.tax;
+                let ttaxObj = getTaxData(tgA, tmPenSelf * 12); let tbNet = bTot - ttaxObj.tax;
                 let taIAdd = 0, taSAdd = tbNet;
                 if(mode !== 'fixed' && totP > 0 && tbNet > 0) { taIAdd = tbNet * (pctI / totP); taSAdd = tbNet * (pctS / totP); }
 
@@ -727,11 +740,13 @@ function renderAnnualChart() {
         options: {
             responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
             onHover: (e, els) => { if(els.length > 0) updateAnnualPanel(els[0].index); },
-            plugins: { tooltip: { enabled: false }, legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+            plugins: { tooltip: { enabled: false }, legend: { display: false }, zoom: createZoomPluginConfig('annual') },
             scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, border: { display: false } } }
         },
         plugins: [retirementShadingPlugin]
     });
+    initTimelineSlider('annual', chartAnnual);
+    generateCustomLegend(chartAnnual, 'legend-annual');
 }
 
 function renderMonthlyChart() {
@@ -765,11 +780,13 @@ function renderMonthlyChart() {
         options: {
             responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
             onHover: (e, els) => { if(els.length > 0) updateMonthlyPanel(els[0].index); },
-            plugins: { tooltip: { enabled: false }, legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+            plugins: { tooltip: { enabled: false }, legend: { display: false }, zoom: createZoomPluginConfig('monthly') },
             scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, border: { display: false } } }
         },
         plugins: [retirementShadingPlugin]
     });
+    initTimelineSlider('monthly', chartMonthly);
+    generateCustomLegend(chartMonthly, 'legend-monthly');
 }
 
 function renderWealthChart() {
@@ -802,11 +819,13 @@ function renderWealthChart() {
         options: {
             responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
             onHover: (e, els) => { if(els.length > 0) updateWealthPanel(els[0].index); },
-            plugins: { tooltip: { enabled: false }, legend: { position: 'bottom', labels: { boxWidth: 15, font: { size: 11 } } } },
+            plugins: { tooltip: { enabled: false }, legend: { display: false }, zoom: createZoomPluginConfig('cumulative') },
             scales: { x: { grid: { display: false } }, y: { border: { display: false } } }
         },
         plugins: [retirementShadingPlugin]
     });
+    initTimelineSlider('cumulative', chartWealth);
+    generateCustomLegend(chartWealth, 'legend-cumulative');
 }
 
 function runSimulation() {
@@ -864,9 +883,264 @@ function runSimulation() {
 
 // 註冊啟動事件
 window.addEventListener('DOMContentLoaded', () => {
+    let pointSelect = document.getElementById('startPoint');
+    if (pointSelect && pointSelect.tagName.toLowerCase() === 'select' && typeof AppData !== 'undefined' && AppData.allPoints) {
+        AppData.allPoints.forEach(pt => {
+            let option = document.createElement('option');
+            option.value = pt;
+            option.text = pt;
+            if (pt === 245) option.selected = true;
+            pointSelect.appendChild(option);
+        });
+    }
+
     updateDynamicTitles();
     buildReferenceTable();
     toggleAllocMode();
     toggleTeacherOptions();
     runSimulation();
 });
+
+// --- Custom Legend Logic ---
+function generateCustomLegend(chart, legendId) {
+    let container = document.getElementById(legendId);
+    if (!container || !chart) return;
+    
+    container.innerHTML = '';
+    
+    chart.data.datasets.forEach((dataset, index) => {
+        let item = document.createElement('div');
+        item.className = 'legend-item';
+        
+        let meta = chart.getDatasetMeta(index);
+        if (meta.hidden) {
+            item.classList.add('hidden');
+        }
+        
+        let colorBox = document.createElement('div');
+        colorBox.className = 'legend-box';
+        // Handle background color for bars vs borders for lines
+        let bgColor = dataset.backgroundColor || dataset.borderColor;
+        if (Array.isArray(bgColor)) bgColor = bgColor[0];
+        
+        // Match line styles if necessary
+        if (dataset.borderDash && dataset.borderDash.length > 0) {
+            colorBox.style.border = `2px dashed ${dataset.borderColor}`;
+            colorBox.style.backgroundColor = 'transparent';
+        } else {
+            colorBox.style.backgroundColor = bgColor;
+        }
+        
+        let text = document.createElement('span');
+        text.innerText = dataset.label;
+        
+        item.appendChild(colorBox);
+        item.appendChild(text);
+        
+        item.onclick = () => {
+            let m = chart.getDatasetMeta(index);
+            m.hidden = m.hidden === null ? !chart.data.datasets[index].hidden : null;
+            chart.update('none');
+            generateCustomLegend(chart, legendId); // Refresh legend state
+        };
+        
+        container.appendChild(item);
+    });
+}
+
+// --- Timeline Slider Logic ---
+let isSyncingTimeline = { 'cumulative': false, 'annual': false, 'monthly': false };
+let chartWindowPos = { 'cumulative': 0, 'annual': 0, 'monthly': 0 };
+let chartWindows = {
+    'annual': 10,
+    'monthly': 10,
+    'cumulative': 10
+};
+
+function renderTimelineTicks(chart, sliderId) {
+    let track = document.getElementById('track-' + sliderId);
+    let ticksContainer = document.getElementById('ticks-' + sliderId);
+    if (!track || !ticksContainer || !chart) return;
+    
+    let labels = chart.data.labels;
+    let totalPoints = labels.length;
+    if (totalPoints === 0) return;
+
+    let startAge = parseInt(labels[0]);
+    if (isNaN(startAge)) return;
+    
+    ticksContainer.innerHTML = '';
+    
+    for (let i = 0; i < totalPoints; i++) {
+        let age = startAge + i;
+        if (age % 5 === 0) {
+            let leftPercent = (i / (totalPoints - 1)) * 100;
+            let tick = document.createElement('div');
+            tick.className = 'timeline-tick';
+            tick.style.left = leftPercent + '%';
+            tick.innerHTML = `<span>${age}</span>`;
+            ticksContainer.appendChild(tick);
+        }
+    }
+}
+
+function syncWindowFromChart(chart, sliderId) {
+    if (isSyncingTimeline[sliderId]) return;
+    let windowEl = document.getElementById('window-' + sliderId);
+    let labelEl = document.getElementById('label-' + sliderId);
+    if (!windowEl || !chart) return;
+
+    let xScale = chart.scales.x;
+    if (!xScale) return;
+    
+    let totalPoints = chart.data.labels.length;
+    let minIdx = xScale.min;
+    let winSize = chartWindows[sliderId];
+    
+    if (minIdx === undefined || minIdx < 0) minIdx = 0;
+    let maxIdx = minIdx + winSize - 1;
+    if (maxIdx > totalPoints - 1) {
+        maxIdx = totalPoints - 1;
+        minIdx = maxIdx - winSize + 1;
+        if (minIdx < 0) minIdx = 0;
+    }
+
+    let leftPercent = (minIdx / totalPoints) * 100;
+    let widthPercent = (winSize / totalPoints) * 100;
+
+    isSyncingTimeline = true;
+    requestAnimationFrame(() => {
+        windowEl.style.left = leftPercent + '%';
+        windowEl.style.width = widthPercent + '%';
+        if (labelEl) labelEl.innerText = winSize + '年';
+        setTimeout(() => isSyncingTimeline = false, 50);
+    });
+}
+
+function updateChartWindow(chart, newMinIdx, sliderId) {
+    let totalPoints = chart.data.labels.length;
+    let winSize = chartWindows[sliderId];
+    let minIdx = Math.max(0, Math.min(newMinIdx, totalPoints - winSize));
+    let maxIdx = minIdx + winSize - 1;
+
+    chart.options.scales.x.min = minIdx;
+    chart.options.scales.x.max = maxIdx;
+    chartWindowPos[sliderId] = minIdx;
+    chart.update('none');
+    
+    syncWindowFromChart(chart, sliderId);
+}
+
+function initTimelineSlider(sliderId, chart) {
+    renderTimelineTicks(chart, sliderId);
+    
+    // Preserve previous position if any
+    let pos = chartWindowPos[sliderId] || 0;
+    updateChartWindow(chart, pos, sliderId);
+
+    let track = document.getElementById('track-' + sliderId);
+    let windowEl = document.getElementById('window-' + sliderId);
+    
+    if (!track || !windowEl) return;
+
+    // Click on track
+    track.onmousedown = function(e) {
+        if (e.target === windowEl || e.target.classList.contains('timeline-handle')) return; // handled by window drag
+        let rect = track.getBoundingClientRect();
+        let clickX = e.clientX - rect.left;
+        let percent = clickX / rect.width;
+        let totalPoints = chart.data.labels.length;
+        let winSize = chartWindows[sliderId];
+        let targetIdx = Math.round(percent * totalPoints) - Math.floor(winSize / 2);
+        updateChartWindow(chart, targetIdx, sliderId);
+    };
+
+    // Drag window or resize handles
+    windowEl.onmousedown = null;
+    let isDragging = false;
+    let isResizing = false;
+    let resizeDir = null;
+    let startX = 0;
+    let startMinIdx = 0;
+    let startWinSize = 0;
+    
+    windowEl.onmousedown = function(e) {
+        startX = e.clientX;
+        startMinIdx = chart.scales.x.min || 0;
+        startWinSize = chartWindows[sliderId];
+        
+        if (e.target.classList.contains('timeline-handle')) {
+            isResizing = true;
+            resizeDir = e.target.getAttribute('data-dir');
+            document.body.style.cursor = 'ew-resize';
+        } else {
+            isDragging = true;
+            document.body.style.cursor = 'grabbing';
+        }
+        
+        e.stopPropagation();
+        
+        let onMouseMove = function(evt) {
+            let rect = track.getBoundingClientRect();
+            let dx = evt.clientX - startX;
+            let dPercent = dx / rect.width;
+            let totalPoints = chart.data.labels.length;
+            let dIdx = Math.round(dPercent * totalPoints);
+            
+            if (isDragging) {
+                updateChartWindow(chart, startMinIdx + dIdx, sliderId);
+            } else if (isResizing) {
+                let newMin = startMinIdx;
+                let newWinSize = startWinSize;
+                
+                if (resizeDir === 'left') {
+                    newMin = Math.max(0, startMinIdx + dIdx);
+                    newWinSize = startWinSize - (newMin - startMinIdx);
+                } else {
+                    newWinSize = startWinSize + dIdx;
+                }
+                
+                // Limit min/max window size (e.g., 5 to 50 years)
+                if (newWinSize < 5) {
+                    newWinSize = 5;
+                    if (resizeDir === 'left') newMin = startMinIdx + startWinSize - 5;
+                }
+                if (newWinSize > totalPoints) {
+                    newWinSize = totalPoints;
+                }
+                if (newMin + newWinSize > totalPoints) {
+                    newWinSize = totalPoints - newMin;
+                }
+                
+                chartWindows[sliderId] = newWinSize;
+                updateChartWindow(chart, newMin, sliderId);
+            }
+        };
+        
+        let onMouseUp = function() {
+            isDragging = false;
+            isResizing = false;
+            document.body.style.cursor = '';
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+        };
+        
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+    };
+}
+
+function createZoomPluginConfig(id) {
+    return {
+        pan: {
+            enabled: true,
+            mode: 'x',
+            onPan: function({chart}) { syncWindowFromChart(chart, id); }
+        },
+        zoom: {
+            wheel: { enabled: false }, // 關閉滾輪縮放
+            pinch: { enabled: false }, // 關閉雙指縮放
+            mode: 'x'
+        }
+    };
+}

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>115.7.2政院公布軍公教調薪方案試算</title>
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='url(%23bg)' stroke='rgba(255,255,255,0.6)' stroke-width='1.5'/><g opacity='0.9'><rect x='20' y='55' width='10' height='20' rx='3' fill='url(%23p1)'/><rect x='34' y='35' width='10' height='40' rx='3' fill='url(%23p2)'/><rect x='48' y='45' width='10' height='30' rx='3' fill='url(%23p3)'/><rect x='62' y='25' width='10' height='50' rx='3' fill='url(%23p4)'/><rect x='76' y='15' width='10' height='60' rx='3' fill='url(%23p5)'/></g><ellipse cx='50' cy='25' rx='30' ry='12' fill='url(%23glow)'/><defs><radialGradient id='bg' cx='30%' cy='30%' r='70%'><stop offset='0%' stop-color='rgba(255,255,255,0.6)'/><stop offset='60%' stop-color='rgba(255,255,255,0.1)'/><stop offset='100%' stop-color='rgba(0,0,0,0.05)'/></radialGradient><linearGradient id='glow' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='rgba(255,255,255,0.5)'/><stop offset='100%' stop-color='rgba(255,255,255,0)'/></linearGradient><linearGradient id='p1' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%235AC8FA'/><stop offset='100%' stop-color='%23007AFF'/></linearGradient><linearGradient id='p2' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%234CD964'/><stop offset='100%' stop-color='%2328a745'/></linearGradient><linearGradient id='p3' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23FF9500'/><stop offset='100%' stop-color='%23E07B00'/></linearGradient><linearGradient id='p4' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23FF3B30'/><stop offset='100%' stop-color='%23C61A09'/></linearGradient><linearGradient id='p5' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23AF52DE'/><stop offset='100%' stop-color='%237A289E'/></linearGradient></defs></svg>" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<style>
+    .stage-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    @media (min-width: 900px) {
+        .stage-container {
+            flex-direction: row;
+        }
+        .stage-card {
+            flex: 1;
+        }
+    }
+    .stage-card {
+        padding: 20px;
+        border-radius: 16px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .stage-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+    .stage-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: var(--text-primary);
+        text-align: center;
+        border-bottom: 2px solid var(--divider);
+        padding-bottom: 10px;
+    }
+    .stage-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    .val-gross {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+    .val-net {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--sys-green);
+        text-align: center;
+        margin: 15px 0;
+    }
+    .val-pool {
+        color: var(--sys-cyan);
+        font-weight: 600;
+    }
+    .val-annual {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--sys-orange);
+        text-align: center;
+        margin-top: 15px;
+    }
+    .diff-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        background: rgba(40, 167, 69, 0.15);
+        color: var(--sys-green);
+        margin-left: 8px;
+    }
+    .disclaimer-footer {
+        margin-top: 30px;
+        padding: 20px;
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        border-top: 1px solid var(--divider);
+    }
+</style>
+</head>
+<body>
+
+<header class="glass-card header" id="main-header">
+    <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+        <div class="header-title-container" style="text-align: center; width: 100%;">
+            <h1 id="header-h1" style="display: flex; align-items: center; justify-content: center; gap: 16px; margin: 0;">
+                <div id="header-logo" style="position: relative; width: 50px; height: 50px; display: inline-block; vertical-align: middle;">
+                    <div style="position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; background: radial-gradient(circle, rgba(90,200,250,0.6) 0%, rgba(175,82,222,0.6) 50%, transparent 100%); filter: blur(8px); opacity: 0.8;"></div>
+                    <div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 60%, rgba(0,0,0,0.05) 100%); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 100 100" style="width: 65%; height: 65%; opacity: 0.85;">
+                            <rect x="15" y="40" width="15" height="35" rx="4" fill="url(#p2)" />
+                            <rect x="42" y="25" width="15" height="50" rx="4" fill="url(#p3)" />
+                            <rect x="69" y="10" width="15" height="65" rx="4" fill="url(#p5)" />
+                            <defs>
+                                <linearGradient id="p2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4CD964"/><stop offset="100%" stop-color="#28a745"/></linearGradient>
+                                <linearGradient id="p3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF9500"/><stop offset="100%" stop-color="#E07B00"/></linearGradient>
+                                <linearGradient id="p5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#AF52DE"/><stop offset="100%" stop-color="#7A289E"/></linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+                <span>115.7.2政院公布軍公教調薪方案試算</span>
+            </h1>
+            <div id="header-desc" style="margin: 8px 0 0 0; font-size: 16px; font-weight: 500; color: var(--text-secondary);">
+                檢視第一階段（定額加給）與第二階段（通案調薪）之單月、單年收入總表
+            </div>
+            <div style="margin-top: 12px; font-size: 14.5px; color: var(--text-primary); font-weight: 500; display: inline-block; text-align: left; background: rgba(255,255,255,0.5); padding: 12px 20px; border-radius: 8px; border: 1px dashed var(--sys-blue); line-height: 1.6;">
+                <div style="margin-bottom: 4px;"><span style="color:var(--sys-blue); font-weight: 700;">第一階段 (115/07起)</span>：教師學術研究加給定額調增 2,000 元。</div>
+                <div><span style="color:var(--sys-purple); font-weight: 700;">第二階段 (116年預估)</span>：在第一階段加薪後的總薪資基礎上，待遇通案全面調增 4% (四捨五入)。</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="dashboard-layout" style="margin-top: 20px;">
+    <!-- 側邊欄：控制面板 -->
+    <div class="sidebar glass-card" style="display: flex; flex-direction: column; height: calc(100vh - 140px);">
+        <div>
+            <div class="section-title">條件設定</div>
+            
+            <div class="input-group">
+                <label>教師身份別</label>
+                <select id="teacherType" onchange="togglePensionUI(); runRaiseSimulation();" style="margin-top: 6px; text-align: left;">
+                    <option value="official_new" selected>公立正式教師 (112新制)</option>
+                    <option value="official_old">公立正式教師 (舊制)</option>
+                    <option value="substitute">代理教師 (無公保)</option>
+                </select>
+            </div>
+            
+            <div class="input-group" id="voluntaryPensionGroup" style="display:flex; flex-direction:column; margin-top: 10px;">
+                <label>退撫自願增提: <span id="val-vol-pen">0.00</span>%</label>
+                <input type="range" id="voluntaryPensionRate" min="0" max="5.25" step="0.25" value="0" oninput="document.getElementById('val-vol-pen').innerText=parseFloat(this.value).toFixed(2); runRaiseSimulation();" style="width: 100%; margin-top:6px;">
+            </div>
+
+            <div class="input-group inline" id="laborPensionGroup" style="display:none; margin-top: 10px;">
+                <label>勞退自提 6%</label>
+                <input type="checkbox" id="optInPension" style="width:20px;height:20px;accent-color:var(--sys-blue);" onchange="runRaiseSimulation()">
+            </div>
+            
+            <div class="input-group">
+                <label>目前薪等 (俸點)</label>
+                <select id="startPoint" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;"></select>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">
+                參考：大學起敘 190 / 碩士起敘 245 / 博士起敘 330
+            </div>
+
+            <button class="btn-primary" onclick="runRaiseSimulation()">執行試算</button>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px;">
+            <a href="index.html" class="nav-link nav-blue" style="text-align:center; display:block;">← 返回首頁</a>
+        </div>
+    </div>
+
+    <!-- 主畫面：三階段結果 -->
+    <div class="main-content">
+        <div class="stage-container" id="results-container">
+            <!-- 動態產生結果卡片 -->
+        </div>
+        
+        <div class="glass-card" id="explanation-section" style="margin-top: 20px;">
+            <h3 style="margin-top:0; margin-bottom:8px;">薪資結構與年度估算說明</h3>
+            <div style="font-size: 14px; color:var(--text-secondary);">
+                <ul style="padding-left: 20px; line-height: 1.8; margin-top:0;">
+                    <li><strong>單年總收入預估：</strong>
+                        <ul style="padding-left: 15px; margin-top: 5px;">
+                            <li><span style="color:var(--text-primary);">正式教師：</span>單月薪資 × 14.5個月(含年終獎金及考績獎金)，扣除健保、公保、退撫及年度所得稅</li>
+                            <li><span style="color:var(--text-primary);">代理教師：</span>單月薪資 × 13.5個月(含年終獎金)，扣除健保、勞保及年度所得稅</li>
+                        </ul>
+                    </li>
+                    <li><strong>公保費 (入資金池)：</strong>
+                        <ul style="padding-left: 15px; margin-top: 5px;">
+                            <li>皆為政府負擔 65%，個人負擔 35%</li>
+                            <li>舊制教師適用 7.83%</li>
+                            <li>112年後初任新制教師適用 16.33%。</li>
+                        </ul>
+                    </li>
+                    <li><strong>退撫強制/自願增提：</strong>
+                        <ul style="padding-left: 15px; margin-top: 5px;">
+                            <li>新舊制皆依 15% 提撥 ，政府負擔65%，個人負擔35%，(自付額計算公式：本俸×2×15%×35%)。</li>
+                            <li>新制教師可自由選擇於 0~5.25% 內自願增提。公保與退撫自付額(含自願增提)，皆不計入個人綜合所得稅課稅範圍。</li>
+                        </ul>
+                    </li>
+                    <li><strong>隱形薪酬 (政府/雇主負擔)：</strong>這是政府/雇主依法必須為您提撥到退休專戶的金額，屬於整體報酬的一部分，然而退休前無法提領，故列為隱形薪酬。</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="disclaimer-footer">
+            免責聲明：此為按照行政院115年7月2日發布之新聞稿試算，正式調薪金額應參照行政院公告為主。<br>
+            資料來源：<a href="https://www.ey.gov.tw/File/ED162A7666A34B0C?A=C" target="_blank" style="color:var(--sys-blue); text-decoration:none;">行政院重要政策報告 ↗</a> &nbsp;|&nbsp; 
+            <a href="https://www.ey.gov.tw/Page/9277F759E41CCD91/fa7ad7a4-e4a3-4dc0-acd1-9d35b25d3076" target="_blank" style="color:var(--sys-blue); text-decoration:none;">行政院新聞稿 (115年7月2日) ↗</a>
+        </div>
+    </div>
+</div>
+
+<script src="data.js"></script>
+<script src="raise_calculator.js"></script>
+</body>
+</html>
