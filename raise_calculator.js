@@ -31,7 +31,7 @@ function togglePensionUI() {
     if (volGroup) volGroup.style.display = (val === 'official_new') ? 'flex' : 'none';
 }
 
-function calculateStage(stageIdx, point, teacherType, optInPension) {
+function calculateStage(stageIdx, point, teacherType, optInPension, supervisorRole, classCount) {
     let isOldSys = teacherType === 'official_old';
     let isNewSys = teacherType === 'official_new';
     
@@ -39,16 +39,40 @@ function calculateStage(stageIdx, point, teacherType, optInPension) {
     let b = AppData.basePayMap[point] || 0;
     let a = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23160));
     
+    // 取得主管加給(s)與工作獎金(w)
+    let s = 0;
+    let w = 0;
+    if (supervisorRole === '校長(高中職)') s = 13510;
+    else if (supervisorRole === '校長(一般中小學)') s = 10010;
+    else if (supervisorRole === '主任' && classCount === '70班以上') s = 7750;
+    else if (supervisorRole === '主任' || supervisorRole === '組長') {
+        if (point >= 290) s = 5930;
+        else if (point >= 245) s = 4870;
+        else s = 4320;
+    }
+
+    if (supervisorRole !== '無') {
+        if (supervisorRole === '校長(高中職)' || supervisorRole === '校長(一般中小學)') {
+            w = (classCount === '70班以上' || classCount === '50-69班') ? 2000 : 1000;
+        } else {
+            w = (classCount === '70班以上' || classCount === '50-69班') ? 1500 : 1000;
+        }
+    }
+    
     // 依據調薪階段調整
     if (stageIdx === 1) {
         a += 2000;
+        if (s > 0) s += 2000;
     } else if (stageIdx === 2) {
         a += 2000;
+        if (s > 0) s += 2000;
+        
         b = Math.round(b * 1.04);
         a = Math.round(a * 1.04);
+        if (s > 0) s = Math.round(s * 1.04);
     }
     
-    let gM = b + a;
+    let gM = b + a + s + w;
     let mH = getHealthIns(gM);
     
     let mPubSelf = 0, mPubGov = 0;
@@ -84,7 +108,7 @@ function calculateStage(stageIdx, point, teacherType, optInPension) {
     let poolGovAnnual = poolGov * 12;
     
     return {
-        stageIdx, b, a, gM, mH, mPubSelf, mPenSelf, mLaborSelf, netM, poolGov,
+        stageIdx, b, a, s, w, gM, mH, mPubSelf, mPenSelf, mLaborSelf, netM, poolGov,
         gA, tax, taxRate, aNetActual, poolGovAnnual,
         isOldSys, isNewSys
     };
@@ -145,6 +169,14 @@ function renderCard(data, title, subtitle, color, diffFrom) {
             <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px;">
                 <span style="color:var(--text-secondary)">學術研究加給</span><span>$${formatMoney(data.a)}</span>
             </div>
+            ${data.s > 0 ? `
+            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px;">
+                <span style="color:var(--text-secondary)">主管職務加給</span><span>$${formatMoney(data.s)}</span>
+            </div>` : ''}
+            ${data.w > 0 ? `
+            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px;">
+                <span style="color:var(--text-secondary)">兼任行政工作獎金</span><span>$${formatMoney(data.w)}</span>
+            </div>` : ''}
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:1px dashed var(--divider);">
                 <span style="font-weight:700; line-height: 1.2;">應發月薪<br><span style="font-size:0.85em; font-weight:normal;">(Gross)</span></span>
                 <div style="text-align: right;">
@@ -194,13 +226,15 @@ function runRaiseSimulation() {
     let point = parseInt(document.getElementById('startPoint').value) || 245;
     let teacherType = document.getElementById('teacherType').value;
     let optInPension = document.getElementById('optInPension').checked;
+    let supervisorRole = document.getElementById('supervisorRole') ? document.getElementById('supervisorRole').value : '無';
+    let classCount = document.getElementById('classCount') ? document.getElementById('classCount').value : '49班以下';
     
     // 若超過最大值，限制在合法範圍
     if (point > 680) { point = 680; document.getElementById('startPoint').value = 680; }
     
-    let stage0 = calculateStage(0, point, teacherType, optInPension);
-    let stage1 = calculateStage(1, point, teacherType, optInPension);
-    let stage2 = calculateStage(2, point, teacherType, optInPension);
+    let stage0 = calculateStage(0, point, teacherType, optInPension, supervisorRole, classCount);
+    let stage1 = calculateStage(1, point, teacherType, optInPension, supervisorRole, classCount);
+    let stage2 = calculateStage(2, point, teacherType, optInPension, supervisorRole, classCount);
     
     let container = document.getElementById('results-container');
     container.innerHTML = 

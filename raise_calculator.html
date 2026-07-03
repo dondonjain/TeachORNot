@@ -150,6 +150,26 @@
             </div>
             
             <div class="input-group">
+                <label>是否兼任主管職務</label>
+                <select id="supervisorRole" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;">
+                    <option value="無" selected>無 (非主管)</option>
+                    <option value="校長(高中職)">校長 (高中職)</option>
+                    <option value="校長(一般中小學)">校長 (一般中小學)</option>
+                    <option value="主任">主任</option>
+                    <option value="組長">組長</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>服務學校班級數量</label>
+                <select id="classCount" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;">
+                    <option value="70班以上">70班以上</option>
+                    <option value="50-69班">50 ~ 69班</option>
+                    <option value="49班以下" selected>49班以下</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
                 <label>目前薪等 (俸點)</label>
                 <select id="startPoint" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;"></select>
             </div>
