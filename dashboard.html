@@ -158,9 +158,9 @@
                 <label>退撫自願增提: <span id="val-vol-pen">0.00</span>%</label>
                 <input type="range" id="voluntaryPensionRate" min="0" max="5.25" step="0.25" value="0" oninput="document.getElementById('val-vol-pen').innerText=parseFloat(this.value).toFixed(2); runSimulation();" style="width: 100%;">
             </div>
-            <div class="input-group inline" id="laborPensionGroup" style="display:none; margin-top: 10px;">
-                <label>勞退自提 6%</label>
-                <input type="checkbox" id="optInPension" style="width:20px;height:20px;accent-color:var(--sys-blue);" onchange="runSimulation()">
+            <div class="input-group" id="laborPensionGroup" style="display:none; flex-direction:column; margin-top: 10px;">
+                <label>勞退自提: <span id="val-labor-pen">0.00</span>%</label>
+                <input type="range" id="optInPension" min="0" max="6" step="1" value="0" oninput="document.getElementById('val-labor-pen').innerText=parseFloat(this.value).toFixed(2); runSimulation();" style="width: 100%; margin-top:6px;">
             </div>
             <div id="newSysWithdrawalGroup" style="display:flex; flex-direction:column; gap:12px; margin-top:15px; padding:16px; background:rgba(0,122,255,0.06); border-radius:12px; border:1px dashed rgba(0,122,255,0.3);">
                 <div style="font-weight:600; font-size:14px; color:var(--sys-blue);">新制退撫專戶 提領策略</div>
@@ -384,7 +384,7 @@
                             <strong>公保費 (入資金池)</strong>
                             <ul style="list-style-type: circle; margin-top: 4px; padding-left: 20px; color: var(--text-secondary);">
                                 <li><strong>負擔比例：</strong> 政府 65% / 個人 35%</li>
-                                <li><strong>舊制教師：</strong> 適用非年金費率 7.83%</li>
+                                <li><strong>舊制教師：</strong> 適用非年金費率 7.22%</li>
                                 <li><strong>新制教師 (112年起)：</strong> 適用全額年金費率 16.33%</li>
                                 <li><strong>節稅優勢：</strong> 公保費自付額，依法全額免計入個人綜合所得稅。</li>
                             </ul>

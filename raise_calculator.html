@@ -144,9 +144,9 @@
                 <input type="range" id="voluntaryPensionRate" min="0" max="5.25" step="0.25" value="0" oninput="document.getElementById('val-vol-pen').innerText=parseFloat(this.value).toFixed(2); runRaiseSimulation();" style="width: 100%; margin-top:6px;">
             </div>
 
-            <div class="input-group inline" id="laborPensionGroup" style="display:none; margin-top: 10px;">
-                <label>勞退自提 6%</label>
-                <input type="checkbox" id="optInPension" style="width:20px;height:20px;accent-color:var(--sys-blue);" onchange="runRaiseSimulation()">
+            <div class="input-group" id="laborPensionGroup" style="display:none; flex-direction:column; margin-top: 10px;">
+                <label>勞退自提: <span id="val-labor-pen">0.00</span>%</label>
+                <input type="range" id="optInPension" min="0" max="6" step="1" value="0" oninput="document.getElementById('val-labor-pen').innerText=parseFloat(this.value).toFixed(2); runRaiseSimulation();" style="width: 100%; margin-top:6px;">
             </div>
             
             <div class="input-group">
@@ -157,6 +157,14 @@
                     <option value="校長(一般中小學)">校長 (一般中小學)</option>
                     <option value="主任">主任</option>
                     <option value="組長">組長</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>是否兼任導師</label>
+                <select id="isHomeroom" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;">
+                    <option value="否" selected>否</option>
+                    <option value="是">是 (4,000元)</option>
                 </select>
             </div>
 
@@ -204,7 +212,7 @@
                     <li><strong>公保費 (入資金池)：</strong>
                         <ul style="padding-left: 15px; margin-top: 5px;">
                             <li>皆為政府負擔 65%，個人負擔 35%</li>
-                            <li>舊制教師適用 7.83%</li>
+                            <li>舊制教師適用 7.22%</li>
                             <li>112年後初任新制教師適用 16.33%。</li>
                         </ul>
                     </li>
@@ -214,6 +222,13 @@
                             <li>新制教師可自由選擇於 0~5.25% 內自願增提。公保與退撫自付額(含自願增提)，皆不計入個人綜合所得稅課稅範圍。</li>
                         </ul>
                     </li>
+                    <li><strong>勞保與勞退 (入資金池)：</strong>
+                        <ul style="padding-left: 15px; margin-top: 5px;">
+                            <li><strong>勞保：</strong>採用級距上限 45,800 元、費率 12.5% 估算。勞工自付 20% ($1,145/月)，雇主及政府負擔 80% ($4,580/月)。</li>
+                            <li><strong>勞退：</strong>以應發月薪 (上限 15 萬元) 估算，雇主強制提撥 6%；勞工另可透過拉桿選擇 0~6% 自提。</li>
+                        </ul>
+                    </li>
+                    <li><strong>導師加給：</strong>每月 4,000 元，免納綜合所得稅，且不計入公保、健保的投保金額計算基準中。</li>
                     <li><strong>隱形薪酬 (政府/雇主負擔)：</strong>這是政府/雇主依法必須為您提撥到退休專戶的金額，屬於整體報酬的一部分，然而退休前無法提領，故列為隱形薪酬。</li>
                 </ul>
             </div>

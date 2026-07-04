@@ -167,7 +167,7 @@ function buildReferenceTable() {
         if(point > maxPoint) return;
         let base = basePayMap[point]; let allow = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23160));
         let gross = base + allow; let health = getHealthIns(gross);
-        let offNet = gross - health - (base * 0.0828 * 0.35) - (base * 2 * 0.15 * 0.35);
+        let offNet = gross - health - (base * 0.0722 * 0.35) - (base * 2 * 0.15 * 0.35);
         let subNet = gross - health - 1145;
         let tr = document.createElement('tr');
         tr.innerHTML = `<td>${point}</td><td>${formatMoney(base)}</td><td>${formatMoney(allow)}</td><td>${formatMoney(gross)}</td><td>${formatMoney(health)}</td><td style="color:var(--sys-blue); font-weight:bold;">${formatMoney(offNet)}</td><td style="font-weight:bold;">${formatMoney(subNet)}</td>`;
@@ -190,7 +190,7 @@ function simulateEngine(isPure) {
     const isOldSys = teachType === 'official_old';
     const isNewSys = teachType === 'official_new';
 
-    const optInPension = document.getElementById('optInPension').checked;
+    const optInPensionRate = parseFloat(document.getElementById('optInPension').value) / 100;
     const startAge = parseInt(document.getElementById('currentAge').value);
     const retAge = parseInt(document.getElementById('retireAge').value) || 65;
     const engLife = parseInt(document.getElementById('engLifespan').value);
@@ -331,8 +331,8 @@ function simulateEngine(isPure) {
 
             let mPubSelf = 0, mPubGov = 0;
             if (isOldSys) {
-                mPubSelf = Math.round(b * 0.0783 * 0.35);
-                mPubGov  = Math.round(b * 0.0783 * 0.65);
+                mPubSelf = Math.round(b * 0.0722 * 0.35);
+                mPubGov  = Math.round(b * 0.0722 * 0.65);
             } else if (isNewSys) {
                 mPubSelf = Math.round(b * 0.1633 * 0.35);
                 mPubGov  = Math.round(b * 0.1633 * 0.65);
@@ -342,7 +342,7 @@ function simulateEngine(isPure) {
             let volPenRate = (isNewSys && volPenElement) ? parseFloat(volPenElement.value) / 100 : 0;
             let mVolPen = (isOldSys || isNewSys) ? Math.round(b * 2 * volPenRate) : 0;
 
-            let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : (optInPension ? Math.round(Math.min(gM, 150000)*0.06) : 0);
+            let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : Math.round(Math.min(gM, 150000) * optInPensionRate);
             let mPenGov  = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.65) : Math.round(Math.min(gM, 150000)*0.06);
             let mLaborSelf = (isOldSys || isNewSys) ? 0 : 1145;
             let mLaborGov  = (isOldSys || isNewSys) ? 0 : 4580;
@@ -405,7 +405,7 @@ function simulateEngine(isPure) {
                 } else { tgM = secSal; tgA = secSal * 12; bTot = 0; }
 
                 let tmH = getHealthIns(tgM); let tmL = 1145; 
-                let tmPenSelf = optInPension ? Math.round(Math.min(tgM, 150000)*0.06) : 0;
+                let tmPenSelf = Math.round(Math.min(tgM, 150000) * optInPensionRate);
                 let tmPenGov = Math.round(Math.min(tgM, 150000)*0.06);
                 let tTotalSelfM = tmL + tmPenSelf; let tTotalGovM = 4580 + tmPenGov;
                 
