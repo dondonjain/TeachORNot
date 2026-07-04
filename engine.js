@@ -347,8 +347,8 @@ function simulateEngine(isPure) {
             let mLaborSelf = (isOldSys || isNewSys) ? 0 : 1145;
             let mLaborGov  = (isOldSys || isNewSys) ? 0 : 4580;
 
-            let totalSelfM = mPubSelf + mPenSelf + mLaborSelf;
-            let totalGovM  = mPubGov + mPenGov + mLaborGov;
+            let totalSelfM = mPubSelf + mPenSelf;
+            let totalGovM  = mPubGov + mPenGov;
 
             if(isOldSys || isNewSys) { 
                 mPub = mPubSelf; mPen = mPenSelf; 
@@ -407,7 +407,7 @@ function simulateEngine(isPure) {
                 let tmH = getHealthIns(tgM); let tmL = 1145; 
                 let tmPenSelf = Math.round(Math.min(tgM, 150000) * optInPensionRate);
                 let tmPenGov = Math.round(Math.min(tgM, 150000)*0.06);
-                let tTotalSelfM = tmL + tmPenSelf; let tTotalGovM = 4580 + tmPenGov;
+                let tTotalSelfM = tmPenSelf; let tTotalGovM = tmPenGov;
                 
                 let tnetM = tgM - tmH - tmL - tmPenSelf;
                 p[i].pFund = p[i].pFund*(1+pRate) + (tmPenSelf*12) + (tmPenGov*12); p[i].yrs++;
@@ -563,7 +563,7 @@ function updateAnnualPanel(idx) {
     let teachType = document.getElementById('teacherType').value;
     let isPublic = isTeacher && (teachType === 'official_new' || teachType === 'official_old');
     
-    let poolTitle = isPublic ? '🔒 退休資金池 (公保+退撫)' : '🔒 退休資金池 (勞保+勞退)';
+    let poolTitle = isPublic ? '🔒 退休資金池 (公保+退撫)' : '🔒 退休資金池 (勞退)';
     let selfLabel = '自己存入';
     let govLabel  = isPublic ? '政府負擔' : '雇主負擔'; // 修正：統一變數名稱為 govLabel
     let pensionDedLabel = isPublic ? '退撫基金 (自付)' : '勞退自提';
@@ -646,7 +646,7 @@ function updateMonthlyPanel(idx) {
     let teachType = document.getElementById('teacherType').value;
     let isPublic = isTeacher && (teachType === 'official_new' || teachType === 'official_old');
     
-    let poolTitle = isPublic ? '🔒 退休資金池 (公保+退撫)' : '🔒 退休資金池 (勞保+勞退)';
+    let poolTitle = isPublic ? '🔒 退休資金池 (公保+退撫)' : '🔒 退休資金池 (勞退)';
     let selfLabel = '自己存入';
     let govLabel  = isPublic ? '政府負擔' : '雇主負擔'; // 修正：統一變數名稱為 govLabel
     let pensionDedLabel = isPublic ? '退撫基金 (自付)' : '勞退自提';

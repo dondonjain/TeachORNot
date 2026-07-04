@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>全新公教理財平台籌備中 - Teach or Not</title>
+<title>TeachOrNot 籌備中</title>
 <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='url(%23bg)' stroke='rgba(255,255,255,0.6)' stroke-width='1.5'/><g opacity='0.9'><rect x='20' y='55' width='10' height='20' rx='3' fill='url(%23p1)'/><rect x='34' y='35' width='10' height='40' rx='3' fill='url(%23p2)'/><rect x='48' y='45' width='10' height='30' rx='3' fill='url(%23p3)'/><rect x='62' y='25' width='10' height='50' rx='3' fill='url(%23p4)'/><rect x='76' y='15' width='10' height='60' rx='3' fill='url(%23p5)'/></g><ellipse cx='50' cy='25' rx='30' ry='12' fill='url(%23glow)'/><defs><radialGradient id='bg' cx='30%' cy='30%' r='70%'><stop offset='0%' stop-color='rgba(255,255,255,0.6)'/><stop offset='60%' stop-color='rgba(255,255,255,0.1)'/><stop offset='100%' stop-color='rgba(0,0,0,0.05)'/></radialGradient><linearGradient id='glow' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='rgba(255,255,255,0.5)'/><stop offset='100%' stop-color='rgba(255,255,255,0)'/></linearGradient><linearGradient id='p1' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%235AC8FA'/><stop offset='100%' stop-color='%23007AFF'/></linearGradient><linearGradient id='p2' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%234CD964'/><stop offset='100%' stop-color='%2328a745'/></linearGradient><linearGradient id='p3' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23FF9500'/><stop offset='100%' stop-color='%23E07B00'/></linearGradient><linearGradient id='p4' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23FF3B30'/><stop offset='100%' stop-color='%23C61A09'/></linearGradient><linearGradient id='p5' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%23AF52DE'/><stop offset='100%' stop-color='%237A289E'/></linearGradient></defs></svg>" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -242,8 +242,17 @@
         </div>
     </div>
 
-    <h1 class="title">全新公教理財平台籌備中，先來算算調薪吧！</h1>
-    <p class="subtitle">我們正在打造更豐富的職涯財富精算系統。<br>在主站正式上線前，趕快來試算最新公布的調薪方案！</p>
+    <h1 class="title">TeachOrNot 籌備中，先來算算調薪吧！</h1>
+    <p class="subtitle">
+        該選擇成為一個教師作育英才，還是該到科技業賣肝？<br>
+        教師的薪水真的是餓不死也發不了大財嗎？<br>
+        科技業的薪水真的有想像中的那麼好嗎？<br>
+        <span style="display:inline-block; margin-top:10px; font-weight:800; color:#007AFF; text-shadow: 0 0 15px rgba(0, 122, 255, 0.6), 0 0 30px rgba(0, 122, 255, 0.3);">
+            To teach or not to tech?<br>
+            That is a question.
+        </span><br><br>
+        在主站正式上線前，趕快來試算最新公布的調薪方案！
+    </p>
 
     <a href="raise_calculator.html" class="cta-btn">
         <span>👉 前往 115年軍公教調薪試算工具</span>
@@ -253,7 +262,7 @@
         <p>留下信箱，第一時間取得平台上線與最新工具通知</p>
         <div class="input-group-flex">
             <input type="email" placeholder="您的 Email 地址" id="email-input">
-            <button onclick="alert('感謝您的支持！這只是一個展示版面，未來您可以串接真實的發信系統。')">通知我</button>
+            <button id="heroSubscribeBtn">通知我</button>
         </div>
     </div>
 
@@ -271,5 +280,6 @@
     </div>
 </div>
 
+<script defer src="subscribe.js?v=1"></script>
 </body>
 </html>
