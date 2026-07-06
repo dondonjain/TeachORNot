@@ -26,7 +26,7 @@ function getTaxData(grossAnnual, extraDeduction = 0) {
 
 function togglePensionUI() {
     let val = document.getElementById('teacherType').value;
-    document.getElementById('laborPensionGroup').style.display = (val === 'substitute') ? 'flex' : 'none';
+    document.getElementById('laborPensionGroup').style.display = (val === 'substitute' || val === 'substitute_no_cert') ? 'flex' : 'none';
     let volGroup = document.getElementById('voluntaryPensionGroup');
     if (volGroup) volGroup.style.display = (val === 'official_new') ? 'flex' : 'none';
 }
@@ -38,6 +38,9 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     // 取得原本俸與學術加給
     let b = AppData.basePayMap[point] || 0;
     let a = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
+    if (teacherType === 'substitute_no_cert') {
+        a = Math.round(a * 0.8);
+    }
     
     // 取得主管加給(s)
     let s = 0;
@@ -66,7 +69,7 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     }
     
     let gM = b + a + s + h;
-    let mH = getHealthIns(b + a + s);
+    let mH = getHealthIns(b + a + s + h);
     
     let mPubSelf = 0, mPubGov = 0;
     if (isOldSys) {

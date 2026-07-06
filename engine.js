@@ -38,7 +38,7 @@ function togglePensionClaimUI() {
     let val = document.getElementById('teacherType').value;
     let claimMode = document.getElementById('pensionClaimMode').value;
     
-    document.getElementById('laborPensionGroup').style.display = (val === 'substitute') ? 'flex' : 'none';
+    document.getElementById('laborPensionGroup').style.display = (val === 'substitute' || val === 'substitute_no_cert') ? 'flex' : 'none';
     let volGroup = document.getElementById('voluntaryPensionGroup');
     if (volGroup) volGroup.style.display = (val === 'official_new') ? 'flex' : 'none';
     
@@ -246,7 +246,7 @@ function simulateEngine(isPure) {
     let tSys = document.getElementById('title-sys').value || '職業A';
     let tStart = document.getElementById('title-start').value || '職業B';
     
-    p[0].title = isOldSys ? '教師(舊制)' : (isNewSys ? '教師(新制)' : '教師(代理)'); 
+    p[0].title = isOldSys ? '教師(舊制)' : (isNewSys ? '教師(新制)' : (teachType === 'substitute_no_cert' ? '教師(無證代理)' : '教師(代理)')); 
     p[1].title = tSys; p[2].title = '半導體'; p[3].title = tStart;
     p[0].color = '#FF3B30'; p[1].color = '#007AFF'; p[2].color = '#1C1C1E'; p[3].color = '#FF9500';
 
@@ -327,6 +327,9 @@ function simulateEngine(isPure) {
             let currentPt = validPoints.length > 0 ? validPoints[pointIndex] : sp;
 
             let b = basePayMap[currentPt]; let a = (currentPt >= 475) ? 35780 : ((currentPt >= 350) ? 30140 : ((currentPt >= 245) ? 26560 : 23080));
+            if (teachType === 'substitute_no_cert') {
+                a = Math.round(a * 0.8);
+            }
             let gM = b + a; let mH = getHealthIns(gM); let mL=0, mPub=0, mPen=0;
 
             let mPubSelf = 0, mPubGov = 0;
