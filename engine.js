@@ -98,6 +98,17 @@ Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "SF Pro Text", 
 function formatMoney(num) { return Math.round(num).toLocaleString('en-US'); }
 function getHealthIns(gross) { let bracket = healthBrackets.find(b => b >= gross) || gross; return Math.round(bracket * 0.0517 * 0.3); }
 
+function getLaborIns(gross) {
+    let laborBrackets = typeof AppData !== 'undefined' && AppData.laborBrackets ? AppData.laborBrackets : [
+        27470, 27600, 28800, 30300, 31800, 33300, 34800, 36300, 38200, 40100, 42000, 43900, 45800
+    ];
+    let bracket = laborBrackets.find(b => b >= gross) || 45800;
+    if (gross > 45800) bracket = 45800;
+    let self = Math.round(bracket * 0.125 * 0.2);
+    let gov = Math.round(bracket * 0.125 * 0.8);
+    return { self, gov };
+}
+
 function getTaxData(grossAnnual, extraDeduction = 0) {
     let totalDeduction = 446000 + extraDeduction;
     let taxable = Math.max(0, grossAnnual - totalDeduction);
@@ -168,7 +179,8 @@ function buildReferenceTable() {
         let base = basePayMap[point]; let allow = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
         let gross = base + allow; let health = getHealthIns(gross);
         let offNet = gross - health - (base * 0.0722 * 0.35) - (base * 2 * 0.15 * 0.35);
-        let subNet = gross - health - 1145;
+        let laborData = getLaborIns(gross);
+        let subNet = gross - health - laborData.self;
         let tr = document.createElement('tr');
         tr.innerHTML = `<td>${point}</td><td>${formatMoney(base)}</td><td>${formatMoney(allow)}</td><td>${formatMoney(gross)}</td><td>${formatMoney(health)}</td><td style="color:var(--sys-blue); font-weight:bold;">${formatMoney(offNet)}</td><td style="font-weight:bold;">${formatMoney(subNet)}</td>`;
         tbody.appendChild(tr);
@@ -347,8 +359,9 @@ function simulateEngine(isPure) {
 
             let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : Math.round(Math.min(gM, 150000) * optInPensionRate);
             let mPenGov  = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.65) : Math.round(Math.min(gM, 150000)*0.06);
-            let mLaborSelf = (isOldSys || isNewSys) ? 0 : 1145;
-            let mLaborGov  = (isOldSys || isNewSys) ? 0 : 4580;
+            let laborData = getLaborIns(gM);
+            let mLaborSelf = (isOldSys || isNewSys) ? 0 : laborData.self;
+            let mLaborGov  = (isOldSys || isNewSys) ? 0 : laborData.gov;
 
             let totalSelfM = mPubSelf + mPenSelf;
             let totalGovM  = mPubGov + mPenGov;
@@ -407,7 +420,9 @@ function simulateEngine(isPure) {
                     tgM = e.base; bTot = e.base * (e.bonus + e.profit);
                 } else { tgM = secSal; tgA = secSal * 12; bTot = 0; }
 
-                let tmH = getHealthIns(tgM); let tmL = 1145; 
+                let tmH = getHealthIns(tgM); 
+                let tlaborData = getLaborIns(tgM);
+                let tmL = tlaborData.self; 
                 let tmPenSelf = Math.round(Math.min(tgM, 150000) * optInPensionRate);
                 let tmPenGov = Math.round(Math.min(tgM, 150000)*0.06);
                 let tTotalSelfM = tmPenSelf; let tTotalGovM = tmPenGov;

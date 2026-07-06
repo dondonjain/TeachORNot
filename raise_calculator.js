@@ -11,6 +11,16 @@ function getHealthIns(gross) {
     return Math.round(bracket * 0.0517 * 0.3); 
 }
 
+function getLaborIns(gross) {
+    if (!AppData.laborBrackets) return { self: 1145, gov: 4580 };
+    let bracket = AppData.laborBrackets.find(b => b >= gross) || 45800;
+    if (gross > 45800) bracket = 45800; // 勞保最高級距為45800
+    // 勞保費率 12.5% (含就保)，勞工負擔 20%，雇主負擔 70%，政府負擔 10% (此處gov為雇主+政府=80%)
+    let self = Math.round(bracket * 0.125 * 0.2);
+    let gov = Math.round(bracket * 0.125 * 0.8);
+    return { self, gov };
+}
+
 function getTaxData(grossAnnual, extraDeduction = 0) {
     let totalDeduction = 446000 + extraDeduction;
     let taxable = Math.max(0, grossAnnual - totalDeduction);
@@ -87,8 +97,9 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : Math.round(Math.min(gM, 150000) * optInPensionRate);
     let mPenGov  = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.65) : Math.round(Math.min(gM, 150000)*0.06);
     
-    let mLaborSelf = (isOldSys || isNewSys) ? 0 : 1145;
-    let mLaborGov  = (isOldSys || isNewSys) ? 0 : 4580;
+    let laborData = getLaborIns(gM);
+    let mLaborSelf = (isOldSys || isNewSys) ? 0 : laborData.self;
+    let mLaborGov  = (isOldSys || isNewSys) ? 0 : laborData.gov;
     
     let netM = gM - mH - mPubSelf - mPenSelf - mLaborSelf;
     let poolGov = mPubGov + mPenGov + mLaborGov;
