@@ -21,6 +21,13 @@ function getLaborIns(gross) {
     return { self, gov };
 }
 
+function getPensionBracket(gross) {
+    if (!AppData.pensionBrackets) return Math.min(gross, 150000);
+    let bracket = AppData.pensionBrackets.find(b => b >= gross) || 150000;
+    if (gross > 150000) bracket = 150000; // 勞退最高級距為150000
+    return bracket;
+}
+
 function getTaxData(grossAnnual, extraDeduction = 0) {
     let totalDeduction = 446000 + extraDeduction;
     let taxable = Math.max(0, grossAnnual - totalDeduction);
@@ -94,8 +101,9 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     let volPenRate = (isNewSys && volPenElement) ? parseFloat(volPenElement.value) / 100 : 0;
     let mVolPen = (isOldSys || isNewSys) ? Math.round(b * 2 * volPenRate) : 0;
 
-    let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : Math.round(Math.min(gM, 150000) * optInPensionRate);
-    let mPenGov  = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.65) : Math.round(Math.min(gM, 150000)*0.06);
+    let pensionBracket = getPensionBracket(gM);
+    let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : Math.round(pensionBracket * optInPensionRate);
+    let mPenGov  = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.65) : Math.round(pensionBracket * 0.06);
     
     let laborData = getLaborIns(gM);
     let mLaborSelf = (isOldSys || isNewSys) ? 0 : laborData.self;

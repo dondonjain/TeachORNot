@@ -109,6 +109,14 @@ function getLaborIns(gross) {
     return { self, gov };
 }
 
+function getPensionBracket(gross) {
+    let pensionBrackets = typeof AppData !== 'undefined' && AppData.pensionBrackets ? AppData.pensionBrackets : null;
+    if (!pensionBrackets) return Math.min(gross, 150000);
+    let bracket = pensionBrackets.find(b => b >= gross) || 150000;
+    if (gross > 150000) bracket = 150000;
+    return bracket;
+}
+
 function getTaxData(grossAnnual, extraDeduction = 0) {
     let totalDeduction = 446000 + extraDeduction;
     let taxable = Math.max(0, grossAnnual - totalDeduction);
@@ -357,8 +365,9 @@ function simulateEngine(isPure) {
             let volPenRate = (isNewSys && volPenElement) ? parseFloat(volPenElement.value) / 100 : 0;
             let mVolPen = (isOldSys || isNewSys) ? Math.round(b * 2 * volPenRate) : 0;
 
-            let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : Math.round(Math.min(gM, 150000) * optInPensionRate);
-            let mPenGov  = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.65) : Math.round(Math.min(gM, 150000)*0.06);
+            let pensionBracket = getPensionBracket(gM);
+            let mPenSelf = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.35 + mVolPen) : Math.round(pensionBracket * optInPensionRate);
+            let mPenGov  = (isOldSys || isNewSys) ? Math.round(b * 2 * 0.15 * 0.65) : Math.round(pensionBracket * 0.06);
             let laborData = getLaborIns(gM);
             let mLaborSelf = (isOldSys || isNewSys) ? 0 : laborData.self;
             let mLaborGov  = (isOldSys || isNewSys) ? 0 : laborData.gov;
@@ -423,8 +432,9 @@ function simulateEngine(isPure) {
                 let tmH = getHealthIns(tgM); 
                 let tlaborData = getLaborIns(tgM);
                 let tmL = tlaborData.self; 
-                let tmPenSelf = Math.round(Math.min(tgM, 150000) * optInPensionRate);
-                let tmPenGov = Math.round(Math.min(tgM, 150000)*0.06);
+                let tpensionBracket = getPensionBracket(tgM);
+                let tmPenSelf = Math.round(tpensionBracket * optInPensionRate);
+                let tmPenGov = Math.round(tpensionBracket * 0.06);
                 let tTotalSelfM = tmPenSelf; let tTotalGovM = tmPenGov;
                 
                 let tnetM = tgM - tmH - tmL - tmPenSelf;
