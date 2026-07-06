@@ -165,7 +165,7 @@ function buildReferenceTable() {
 
     allPoints.forEach(point => {
         if(point > maxPoint) return;
-        let base = basePayMap[point]; let allow = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23160));
+        let base = basePayMap[point]; let allow = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
         let gross = base + allow; let health = getHealthIns(gross);
         let offNet = gross - health - (base * 0.0722 * 0.35) - (base * 2 * 0.15 * 0.35);
         let subNet = gross - health - 1145;
@@ -326,7 +326,7 @@ function simulateEngine(isPure) {
             let pointIndex = Math.min(wYrs, validPoints.length - 1);
             let currentPt = validPoints.length > 0 ? validPoints[pointIndex] : sp;
 
-            let b = basePayMap[currentPt]; let a = (currentPt >= 475) ? 35780 : ((currentPt >= 350) ? 30140 : ((currentPt >= 245) ? 26560 : 23160));
+            let b = basePayMap[currentPt]; let a = (currentPt >= 475) ? 35780 : ((currentPt >= 350) ? 30140 : ((currentPt >= 245) ? 26560 : 23080));
             let gM = b + a; let mH = getHealthIns(gM); let mL=0, mPub=0, mPen=0;
 
             let mPubSelf = 0, mPubGov = 0;

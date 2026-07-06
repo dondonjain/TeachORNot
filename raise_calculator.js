@@ -37,7 +37,7 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     
     // 取得原本俸與學術加給
     let b = AppData.basePayMap[point] || 0;
-    let a = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23160));
+    let a = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
     
     // 取得主管加給(s)
     let s = 0;
