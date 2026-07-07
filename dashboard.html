@@ -136,10 +136,25 @@
             <div class="section-title">公教體系參數</div>
             <div class="input-group inline" style="margin-bottom: 8px;">
                 <label>最高學歷</label>
-                <select id="teacherDegree" onchange="updateStartPoint()" style="text-align: right;">
-                    <option value="bachelor">大學</option>
+                <select id="teacherDegree" onchange="updateStartPoint()" style="text-align: center;">
+                    <option value="bachelor">學士</option>
                     <option value="master" selected>碩士</option>
                     <option value="phd">博士</option>
+                </select>
+            </div>
+            <div class="input-group inline" style="margin-bottom: 8px;">
+                <label>任教階段</label>
+                <select id="teachingStage" onchange="runSimulation()" style="text-align: center;">
+                    <option value="elementary">國小</option>
+                    <option value="middle">國中</option>
+                    <option value="high" selected>高中職</option>
+                </select>
+            </div>
+            <div class="input-group inline" style="margin-bottom: 8px;">
+                <label>具備教師證</label>
+                <select id="hasTeacherCert" onchange="toggleTeacherOptions(); updateStartPoint();" style="text-align: center;">
+                    <option value="yes" selected>有</option>
+                    <option value="no">無</option>
                 </select>
             </div>
             <div class="input-group inline">
@@ -152,7 +167,6 @@
                     <option value="official_new" selected>公立正式教師 (112新制-個人專戶)</option>
                     <option value="official_old">公立正式教師 (舊制-確定給付)</option>
                     <option value="substitute">代理教師 (勞保/勞退)</option>
-                    <option value="substitute_no_cert">代理教師 (無教師證)</option>
                 </select>
             </div>
             <div class="input-group inline" id="voluntaryPensionGroup" style="display:flex; margin-top: 10px;">

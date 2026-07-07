@@ -15,14 +15,44 @@ function updateDynamicTitles() {
 }
 
 function updateStartPoint() {
-    let deg = document.getElementById('teacherDegree').value;
+    let degEle = document.getElementById('teacherDegree');
+    let deg = degEle ? degEle.value : 'bachelor';
+    let hasCertEle = document.getElementById('hasTeacherCert');
+    let hasCert = hasCertEle ? (hasCertEle.value === 'yes') : true;
     let spInput = document.getElementById('startPoint');
-    if(deg === 'bachelor') spInput.value = 190;
-    else if(deg === 'master') spInput.value = 245;
-    else if(deg === 'phd') spInput.value = 330;
+    if (!spInput) return;
     
-    buildReferenceTable();
-    runSimulation();
+    let currentVal = parseInt(spInput.value) || 190;
+    
+    let minPoint = 190, maxPoint = 625, defaultPoint = 190;
+    if (deg === 'phd') { minPoint = 330; maxPoint = 680; defaultPoint = 330; }
+    else if (deg === 'master') { minPoint = 245; maxPoint = 650; defaultPoint = 245; }
+    else if (deg === 'bachelor') { 
+        minPoint = hasCert ? 190 : 170; 
+        maxPoint = 625; 
+        defaultPoint = hasCert ? 190 : 170; 
+    }
+
+    spInput.innerHTML = '';
+    if (typeof AppData !== 'undefined' && AppData.allPoints) {
+        AppData.allPoints.forEach(pt => {
+            if (pt >= minPoint && pt <= maxPoint) {
+                let option = document.createElement('option');
+                option.value = pt;
+                option.text = pt;
+                spInput.appendChild(option);
+            }
+        });
+    }
+
+    if (currentVal >= minPoint && currentVal <= maxPoint && AppData.allPoints.includes(currentVal)) {
+        spInput.value = currentVal;
+    } else {
+        spInput.value = defaultPoint;
+    }
+    
+    if (typeof buildReferenceTable === 'function') buildReferenceTable();
+    if (typeof runSimulation === 'function') runSimulation();
 }
 
 function switchMainTab(index) {
@@ -31,6 +61,25 @@ function switchMainTab(index) {
 }
 
 function toggleTeacherOptions() {
+    let hasCertEle = document.getElementById('hasTeacherCert');
+    if (hasCertEle) {
+        let isCert = (hasCertEle.value === 'yes');
+        let typeSelect = document.getElementById('teacherType');
+        let currentType = typeSelect.value;
+        typeSelect.innerHTML = '';
+        if (isCert) {
+            typeSelect.innerHTML = `
+                <option value="official_new">公立正式教師 (112新制-個人專戶)</option>
+                <option value="official_old">公立正式教師 (舊制-確定給付)</option>
+                <option value="substitute">代理教師 (勞保/勞退)</option>
+            `;
+            if (currentType !== 'substitute_no_cert') typeSelect.value = currentType || 'official_new';
+            else typeSelect.value = 'official_new';
+        } else {
+            typeSelect.innerHTML = `<option value="substitute">代理教師 (無教師證)</option>`;
+            typeSelect.value = 'substitute';
+        }
+    }
     togglePensionClaimUI();
 }
 
@@ -184,7 +233,15 @@ function buildReferenceTable() {
 
     allPoints.forEach(point => {
         if(point > maxPoint) return;
-        let base = basePayMap[point]; let allow = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
+        let base = basePayMap[point]; 
+        let degEle = document.getElementById('teacherDegree');
+        let currentDeg = degEle ? degEle.value : 'bachelor';
+        let allow = 0;
+        if (currentDeg === 'bachelor' && point >= 450) {
+            allow = 30140;
+        } else {
+            allow = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
+        }
         let gross = base + allow; let health = getHealthIns(gross);
         let offNet = gross - health - (base * 0.0722 * 0.35) - (base * 2 * 0.15 * 0.35);
         let laborData = getLaborIns(gross);
@@ -344,10 +401,18 @@ function simulateEngine(isPure) {
         if(!isRet) {
             let validPoints = allPoints.filter(pt => pt >= sp && pt <= maxPoint);
             let pointIndex = Math.min(wYrs, validPoints.length - 1);
-            let currentPt = validPoints.length > 0 ? validPoints[pointIndex] : sp;
+            p[0].point = validPoints.length > 0 ? validPoints[pointIndex] : sp;
 
-            let b = basePayMap[currentPt]; let a = (currentPt >= 475) ? 35780 : ((currentPt >= 350) ? 30140 : ((currentPt >= 245) ? 26560 : 23080));
-            if (teachType === 'substitute_no_cert') {
+            let b = basePayMap[p[0].point];            let a = 0;
+            let degEle = document.getElementById('teacherDegree');
+            let deg = degEle ? degEle.value : 'bachelor';
+            if (deg === 'bachelor' && p[0].point >= 450) {
+                a = 30140;
+            } else {
+                a = (p[0].point >= 475) ? 35780 : ((p[0].point >= 350) ? 30140 : ((p[0].point >= 245) ? 26560 : 23080));
+            }
+            let hasCertEle = document.getElementById('hasTeacherCert');
+            if (hasCertEle && hasCertEle.value === 'no') {
                 a = Math.round(a * 0.8);
             }
             let gM = b + a; let mH = getHealthIns(gM); let mL=0, mPub=0, mPen=0;
@@ -911,17 +976,7 @@ function runSimulation() {
 
 // 註冊啟動事件
 window.addEventListener('DOMContentLoaded', () => {
-    let pointSelect = document.getElementById('startPoint');
-    if (pointSelect && pointSelect.tagName.toLowerCase() === 'select' && typeof AppData !== 'undefined' && AppData.allPoints) {
-        AppData.allPoints.forEach(pt => {
-            let option = document.createElement('option');
-            option.value = pt;
-            option.text = pt;
-            if (pt === 245) option.selected = true;
-            pointSelect.appendChild(option);
-        });
-    }
-
+    updateStartPoint();
     updateDynamicTitles();
     buildReferenceTable();
     toggleAllocMode();

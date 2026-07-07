@@ -130,57 +130,83 @@
         <div>
             <div class="section-title">條件設定</div>
             
-            <div class="input-group">
-                <label>教師身份別</label>
-                <select id="teacherType" onchange="togglePensionUI(); runRaiseSimulation();" style="margin-top: 6px; text-align: left;">
-                    <option value="official_new" selected>公立正式教師 (112新制)</option>
-                    <option value="official_old">公立正式教師 (舊制)</option>
-                    <option value="substitute">代理教師 (無公保)</option>
-                    <option value="substitute_no_cert">代理教師 (無教師證)</option>
-                </select>
+            <div class="grid-2-col">
+                <div class="input-group inline">
+                    <label>最高學歷</label>
+                    <select id="teacherDegree" onchange="updateStartPoint()" style="text-align: center;">
+                        <option value="bachelor">學士</option>
+                        <option value="master" selected>碩士</option>
+                        <option value="phd">博士</option>
+                    </select>
+                </div>
+                
+                <div class="input-group inline">
+                    <label>具備教師證</label>
+                    <select id="hasTeacherCert" onchange="togglePensionUI(); updateStartPoint();" style="text-align: center;">
+                        <option value="yes" selected>有</option>
+                        <option value="no">無</option>
+                    </select>
+                </div>
+                
+                <div class="input-group inline">
+                    <label>教師身份別</label>
+                    <select id="teacherType" onchange="togglePensionUI(); runRaiseSimulation();" style="text-align: center;">
+                        <option value="official_new" selected>公立正式教師 (112新制)</option>
+                        <option value="official_old">公立正式教師 (舊制)</option>
+                        <option value="substitute">代理教師 (勞保/勞退)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group inline">
+                    <label>任教階段</label>
+                    <select id="teachingStage" onchange="runRaiseSimulation()" style="text-align: center;">
+                        <option value="elementary">國小</option>
+                        <option value="middle">國中</option>
+                        <option value="high" selected>高中職</option>
+                    </select>
+                </div>
+
+                <div class="input-group inline">
+                    <label>是否兼任導師</label>
+                    <select id="isHomeroom" onchange="handleRoleChange('homeroom')" style="text-align: center;">
+                        <option value="否" selected>否</option>
+                        <option value="是">是 (4,000元)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group inline">
+                    <label>是否兼任主管職務</label>
+                    <select id="supervisorRole" onchange="handleRoleChange('supervisor')" style="text-align: center;">
+                        <option value="無" selected>無</option>
+                        <option value="組長">組長</option>
+                        <option value="主任">主任</option>
+                        <option value="校長">校長</option>
+                    </select>
+                </div>
+                
+                <div class="input-group inline">
+                    <label>服務學校班級數量</label>
+                    <select id="classCount" onchange="runRaiseSimulation()" style="text-align: center;">
+                        <option value="70班以上">70班以上</option>
+                        <option value="50-69班">50 ~ 69班</option>
+                        <option value="49班以下" selected>49班以下</option>
+                    </select>
+                </div>
+                
+                <div class="input-group inline">
+                    <label>目前薪等 (俸點)</label>
+                    <select id="startPoint" onchange="runRaiseSimulation()" style="text-align: center;"></select>
+                </div>
             </div>
             
-            <div class="input-group" id="voluntaryPensionGroup" style="display:flex; flex-direction:column; margin-top: 10px;">
+            <div class="input-group" id="voluntaryPensionGroup" style="display:flex; flex-direction:column; margin-top: 15px;">
                 <label>退撫自願增提: <span id="val-vol-pen">0.00</span>%</label>
                 <input type="range" id="voluntaryPensionRate" min="0" max="5.25" step="0.25" value="0" oninput="document.getElementById('val-vol-pen').innerText=parseFloat(this.value).toFixed(2); runRaiseSimulation();" style="width: 100%; margin-top:6px;">
             </div>
 
-            <div class="input-group" id="laborPensionGroup" style="display:none; flex-direction:column; margin-top: 10px;">
-                <label>勞退自提: <span id="val-labor-pen">0.00</span>%</label>
+            <div class="input-group" id="laborPensionGroup" style="display:none; flex-direction:column; margin-top: 15px;">
+                <label>勞退自提 (依分級表): <span id="val-labor-pen">0.00</span>%</label>
                 <input type="range" id="optInPension" min="0" max="6" step="1" value="0" oninput="document.getElementById('val-labor-pen').innerText=parseFloat(this.value).toFixed(2); runRaiseSimulation();" style="width: 100%; margin-top:6px;">
-            </div>
-            
-            <div class="input-group">
-                <label>是否兼任主管職務</label>
-                <select id="supervisorRole" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;">
-                    <option value="無" selected>無 (非主管)</option>
-                    <option value="校長(高中職)">校長 (高中職)</option>
-                    <option value="校長(一般中小學)">校長 (一般中小學)</option>
-                    <option value="主任">主任</option>
-                    <option value="組長">組長</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>是否兼任導師</label>
-                <select id="isHomeroom" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;">
-                    <option value="否" selected>否</option>
-                    <option value="是">是 (4,000元)</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>服務學校班級數量</label>
-                <select id="classCount" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;">
-                    <option value="70班以上">70班以上</option>
-                    <option value="50-69班">50 ~ 69班</option>
-                    <option value="49班以下" selected>49班以下</option>
-                </select>
-            </div>
-            
-            <div class="input-group">
-                <label>目前薪等 (俸點)</label>
-                <select id="startPoint" onchange="runRaiseSimulation()" style="margin-top: 6px; text-align: left;"></select>
             </div>
             <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">
                 參考：大學起敘 190 / 碩士起敘 245 / 博士起敘 330

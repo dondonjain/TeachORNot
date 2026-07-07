@@ -41,7 +41,97 @@ function getTaxData(grossAnnual, extraDeduction = 0) {
     return { tax: Math.max(0, tax), rate: rate };
 }
 
+function calculateMonthlyTax(annualGross, totalDeduction) {
+    let standardDeduction = 124000 + 207000;
+    let net = annualGross - standardDeduction - totalDeduction;
+    let rate = 0.05, tax = 0;
+    if (net > 0) {
+        if (net <= 540000) { tax = net * 0.05; rate = 0.05; }
+        else if (net <= 1210000) { tax = net * 0.12 - 37800; rate = 0.12; }
+        else if (net <= 2420000) { tax = net * 0.20 - 134600; rate = 0.20; }
+        else if (net <= 4530000) { tax = net * 0.30 - 376600; rate = 0.30; }
+        else { tax = net * 0.40 - 829600; rate = 0.40; }
+    }
+    return { tax: Math.max(0, tax), rate: rate };
+}
+
+function handleRoleChange(source) {
+    let supEle = document.getElementById('supervisorRole');
+    let hrEle = document.getElementById('isHomeroom');
+    if (!supEle || !hrEle) return;
+    
+    if (source === 'supervisor') {
+        if (supEle.value !== '無') {
+            hrEle.value = '否';
+        }
+    } else if (source === 'homeroom') {
+        if (hrEle.value === '是') {
+            supEle.value = '無';
+        }
+    }
+    if (typeof runRaiseSimulation === 'function') runRaiseSimulation();
+}
+
+function updateStartPoint() {
+    let degEle = document.getElementById('teacherDegree');
+    let deg = degEle ? degEle.value : 'bachelor';
+    let hasCertEle = document.getElementById('hasTeacherCert');
+    let hasCert = hasCertEle ? (hasCertEle.value === 'yes') : true;
+    let spInput = document.getElementById('startPoint');
+    if (!spInput) return;
+    
+    let currentVal = parseInt(spInput.value) || 190;
+    
+    let minPoint = 190, maxPoint = 625, defaultPoint = 190;
+    if (deg === 'phd') { minPoint = 330; maxPoint = 680; defaultPoint = 330; }
+    else if (deg === 'master') { minPoint = 245; maxPoint = 650; defaultPoint = 245; }
+    else if (deg === 'bachelor') { 
+        minPoint = hasCert ? 190 : 170; 
+        maxPoint = 625; 
+        defaultPoint = hasCert ? 190 : 170; 
+    }
+
+    spInput.innerHTML = '';
+    if (typeof AppData !== 'undefined' && AppData.allPoints) {
+        AppData.allPoints.forEach(pt => {
+            if (pt >= minPoint && pt <= maxPoint) {
+                let option = document.createElement('option');
+                option.value = pt;
+                option.text = pt;
+                spInput.appendChild(option);
+            }
+        });
+    }
+
+    if (currentVal >= minPoint && currentVal <= maxPoint && AppData.allPoints.includes(currentVal)) {
+        spInput.value = currentVal;
+    } else {
+        spInput.value = defaultPoint;
+    }
+    if (typeof runRaiseSimulation === 'function') runRaiseSimulation();
+}
+
 function togglePensionUI() {
+    let hasCertEle = document.getElementById('hasTeacherCert');
+    if (hasCertEle) {
+        let isCert = (hasCertEle.value === 'yes');
+        let typeSelect = document.getElementById('teacherType');
+        let currentType = typeSelect.value;
+        typeSelect.innerHTML = '';
+        if (isCert) {
+            typeSelect.innerHTML = `
+                <option value="official_new">公立正式教師 (112新制)</option>
+                <option value="official_old">公立正式教師 (舊制)</option>
+                <option value="substitute">代理教師 (勞保/勞退)</option>
+            `;
+            if (currentType !== 'substitute_no_cert') typeSelect.value = currentType || 'official_new';
+            else typeSelect.value = 'official_new';
+        } else {
+            typeSelect.innerHTML = `<option value="substitute">代理教師 (無教師證)</option>`;
+            typeSelect.value = 'substitute';
+        }
+    }
+    
     let val = document.getElementById('teacherType').value;
     document.getElementById('laborPensionGroup').style.display = (val === 'substitute' || val === 'substitute_no_cert') ? 'flex' : 'none';
     let volGroup = document.getElementById('voluntaryPensionGroup');
@@ -54,17 +144,32 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     
     // 取得原本俸與學術加給
     let b = AppData.basePayMap[point] || 0;
-    let a = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
-    if (teacherType === 'substitute_no_cert') {
+    
+    let degEle = document.getElementById('teacherDegree');
+    let currentDeg = degEle ? degEle.value : 'bachelor';
+    let a = 0;
+    if (currentDeg === 'bachelor' && point >= 450) {
+        a = 30140;
+    } else {
+        a = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
+    }
+    let hasCertEle = document.getElementById('hasTeacherCert');
+    if (hasCertEle && hasCertEle.value === 'no') {
         a = Math.round(a * 0.8);
     }
     
     // 取得主管加給(s)
     let s = 0;
-    if (supervisorRole === '校長(高中職)') s = 13510;
-    else if (supervisorRole === '校長(一般中小學)') s = 10010;
-    else if (supervisorRole === '主任' && classCount === '70班以上') s = 7750;
-    else if (supervisorRole === '主任' || supervisorRole === '組長') {
+    let teachingStage = document.getElementById('teachingStage') ? document.getElementById('teachingStage').value : 'high';
+    
+    if (supervisorRole === '校長') {
+        s = (teachingStage === 'high') ? 13510 : 10010;
+    } else if (supervisorRole === '主任') {
+        if (teachingStage === 'high' || (teachingStage === 'middle' && classCount === '70班以上')) s = 7750;
+        else if (point >= 290) s = 5930;
+        else if (point >= 245) s = 4870;
+        else s = 4320;
+    } else if (supervisorRole === '組長') {
         if (point >= 290) s = 5930;
         else if (point >= 245) s = 4870;
         else s = 4320;
@@ -261,17 +366,7 @@ function runRaiseSimulation() {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
-    let pointSelect = document.getElementById('startPoint');
-    if (pointSelect && typeof AppData !== 'undefined' && AppData.allPoints) {
-        AppData.allPoints.forEach(pt => {
-            let option = document.createElement('option');
-            option.value = pt;
-            option.text = pt;
-            if (pt === 245) option.selected = true;
-            pointSelect.appendChild(option);
-        });
-    }
-
+    updateStartPoint();
     togglePensionUI();
     runRaiseSimulation();
 });
