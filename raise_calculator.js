@@ -56,19 +56,6 @@ function calculateMonthlyTax(annualGross, totalDeduction) {
 }
 
 function handleRoleChange(source) {
-    let supEle = document.getElementById('supervisorRole');
-    let hrEle = document.getElementById('isHomeroom');
-    if (!supEle || !hrEle) return;
-    
-    if (source === 'supervisor') {
-        if (supEle.value !== '無') {
-            hrEle.value = '否';
-        }
-    } else if (source === 'homeroom') {
-        if (hrEle.value === '是') {
-            supEle.value = '無';
-        }
-    }
     if (typeof runRaiseSimulation === 'function') runRaiseSimulation();
 }
 
@@ -138,7 +125,7 @@ function togglePensionUI() {
     if (volGroup) volGroup.style.display = (val === 'official_new') ? 'flex' : 'none';
 }
 
-function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervisorRole, classCount, isHomeroom = false) {
+function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervisorRole, classCount, isHomeroom = false, specialEdVal = '無') {
     let isOldSys = teacherType === 'official_old';
     let isNewSys = teacherType === 'official_new';
     
@@ -177,6 +164,10 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     
     let h = isHomeroom ? 4000 : 0;
     
+    let sp = 0;
+    if (specialEdVal === '有證') sp = 2800;
+    else if (specialEdVal === '無證') sp = 900;
+    
     // 依據調薪階段調整
     if (stageIdx === 1) {
         a += 2000;
@@ -190,8 +181,8 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
         if (s > 0) s = Math.round(s * 1.04);
     }
     
-    let gM = b + a + s + h;
-    let mH = getHealthIns(b + a + s + h);
+    let gM = b + a + s + h + sp;
+    let mH = getHealthIns(gM);
     
     let mPubSelf = 0, mPubGov = 0;
     if (isOldSys) {
@@ -228,7 +219,7 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     let poolGovAnnual = poolGov * 12;
     
     return {
-        stageIdx, b, a, s, h, gM, mH, mPubSelf, mPenSelf, mLaborSelf, netM, poolGov,
+        stageIdx, b, a, s, h, sp, gM, mH, mPubSelf, mPenSelf, mLaborSelf, netM, poolGov,
         gA, tax, taxRate, aNetActual, poolGovAnnual,
         isOldSys, isNewSys
     };
@@ -297,6 +288,10 @@ function renderCard(data, title, subtitle, color, diffFrom) {
             <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px;">
                 <span style="color:var(--text-secondary)">導師加給</span><span>$${formatMoney(data.h)}</span>
             </div>` : ''}
+            ${data.sp > 0 ? `
+            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:5px;">
+                <span style="color:var(--text-secondary)">特教加給</span><span>$${formatMoney(data.sp)}</span>
+            </div>` : ''}
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:1px dashed var(--divider);">
                 <span style="font-weight:700; line-height: 1.2;">應發月薪<br><span style="font-size:0.85em; font-weight:normal;">(Gross)</span></span>
                 <div style="text-align: right;">
@@ -349,13 +344,14 @@ function runRaiseSimulation() {
     let supervisorRole = document.getElementById('supervisorRole') ? document.getElementById('supervisorRole').value : '無';
     let isHomeroom = document.getElementById('isHomeroom') ? document.getElementById('isHomeroom').value === '是' : false;
     let classCount = document.getElementById('classCount') ? document.getElementById('classCount').value : '49班以下';
+    let specialEdVal = document.getElementById('specialEdAllowance') ? document.getElementById('specialEdAllowance').value : '無';
     
     // 若超過最大值，限制在合法範圍
     if (point > 680) { point = 680; document.getElementById('startPoint').value = 680; }
     
-    let stage0 = calculateStage(0, point, teacherType, optInPensionRate, supervisorRole, classCount, isHomeroom);
-    let stage1 = calculateStage(1, point, teacherType, optInPensionRate, supervisorRole, classCount, isHomeroom);
-    let stage2 = calculateStage(2, point, teacherType, optInPensionRate, supervisorRole, classCount, isHomeroom);
+    let stage0 = calculateStage(0, point, teacherType, optInPensionRate, supervisorRole, classCount, isHomeroom, specialEdVal);
+    let stage1 = calculateStage(1, point, teacherType, optInPensionRate, supervisorRole, classCount, isHomeroom, specialEdVal);
+    let stage2 = calculateStage(2, point, teacherType, optInPensionRate, supervisorRole, classCount, isHomeroom, specialEdVal);
     
     let container = document.getElementById('results-container');
     container.innerHTML = 
