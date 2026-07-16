@@ -140,10 +140,6 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
     } else {
         a = (point >= 475) ? 35780 : ((point >= 350) ? 30140 : ((point >= 245) ? 26560 : 23080));
     }
-    let hasCertEle = document.getElementById('hasTeacherCert');
-    if (hasCertEle && hasCertEle.value === 'no') {
-        a = Math.round(a * 0.8);
-    }
     
     // 取得主管加給(s)
     let s = 0;
@@ -181,6 +177,11 @@ function calculateStage(stageIdx, point, teacherType, optInPensionRate, supervis
         if (s > 0) s = Math.round(s * 1.04);
     }
     
+    let hasCertEle = document.getElementById('hasTeacherCert');
+    if (hasCertEle && hasCertEle.value === 'no') {
+        a = Math.round(a * 0.8);
+    }
+
     let gM = b + a + s + h + sp;
     let mH = getHealthIns(gM);
     
